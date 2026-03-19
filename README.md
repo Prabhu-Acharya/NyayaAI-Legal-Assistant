@@ -20,11 +20,6 @@ An AI-based LegalTech platform that provides legal guidance using Indian judicia
 
 ---
 
-## 📌 Project Status
-✅ Day 1 Completed  
-🔄 Frontend & AI Integration in Progress
-
----
 
 ## 🎯 Future Scope
 - Login & Authentication (JWT)
