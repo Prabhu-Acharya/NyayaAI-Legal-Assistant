@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 function Login() {
-  // 🧠 form data store kar rahe hain
+  // 🧠 form data store
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -30,10 +30,19 @@ function Login() {
 
       console.log(data);
 
+      // ❌ error handle (IMPORTANT)
+      if (!data.token) {
+        alert(data.message || "Login failed ❌");
+        return;
+      }
+
       // 💾 token save
       localStorage.setItem("token", data.token);
 
       alert("Login Successful 🚀");
+
+      // 🔄 reload → dashboard show hoga
+      window.location.reload();
 
     } catch (error) {
       console.error(error);
