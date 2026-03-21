@@ -3,26 +3,27 @@ const jwt = require("jsonwebtoken");
 // 🔐 Middleware to protect routes
 const protect = (req, res, next) => {
   try {
-    // 📥 Authorization header lo
-    const authHeader = req.headers.authorization;
+    let token;
 
-    // ❌ agar header hi nahi hai
-    if (!authHeader || !authHeader.startsWith("Bearer")) {
+    // 🔍 check header exists
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+      
+      // 🪄 "Bearer TOKEN" se sirf token nikaal rahe hain
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token) {
       return res.status(401).json({
         message: "Not authorized, no token ❌"
       });
     }
 
-    // ✅ "Bearer TOKEN" me se sirf TOKEN nikaal rahe hain
-    const token = authHeader.split(" ")[1];
-
-    // 🎟️ token verify
+    // 🎟️ verify token
     const decoded = jwt.verify(token, "secretkey");
 
-    // 🧠 user id store
     req.user = decoded.id;
 
-    next(); // aage jao
+    next();
 
   } catch (error) {
     return res.status(401).json({
