@@ -8,6 +8,6 @@ const protect = require("../middleware/authMiddleware");
 const { askQuery } = require("../controllers/queryController");
 
 // 🟢 protected route (login ke bina access nahi milega)
-router.post("/", protect, askQuery);
+router.post("/ask", askQuery);
 
 module.exports = router;
