@@ -1,30 +1,46 @@
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import ChatPage from "./pages/ChatPage";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
-
-  // 🔍 check token (user logged in hai ya nahi)
   const token = localStorage.getItem("token");
 
   return (
-    <div>
-      <h1>NyayaAI ⚖️</h1>
+    <BrowserRouter>
+      <h1 className="text-center text-2xl">NyayaAI ⚖️</h1>
 
-      {
-        token ? (
-          // ✅ agar token hai → dashboard dikhao
-          <Dashboard />
-        ) : (
-          // ❌ agar token nahi hai → login + register dikhao
-          <>
-            <Register />
-            <Login />
-          </>
-        )
-      }
+      <Routes>
+        {/* Public Routes */}
+        <Route
+          path="/login"
+          element={token ? <Navigate to="/dashboard" /> : <Login />}
+        />
 
-    </div>
+        <Route
+          path="/register"
+          element={token ? <Navigate to="/dashboard" /> : <Register />}
+        />
+
+        {/* Protected Routes */}
+        <Route
+          path="/dashboard"
+          element={token ? <Dashboard /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/chat"
+          element={token ? <ChatPage /> : <Navigate to="/login" />}
+        />
+
+        {/* Default */}
+        <Route
+          path="/"
+          element={<Navigate to={token ? "/dashboard" : "/login"} />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
