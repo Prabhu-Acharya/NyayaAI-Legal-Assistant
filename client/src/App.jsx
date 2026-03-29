@@ -1,7 +1,6 @@
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import ChatPage from "./pages/ChatPage";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
@@ -9,10 +8,12 @@ function App() {
 
   return (
     <BrowserRouter>
-      <h1 className="text-center text-2xl">NyayaAI ⚖️</h1>
+      <h1 className="text-center text-2xl font-bold my-4">
+        ⚖️ NyayaAI
+      </h1>
 
       <Routes>
-        {/* Public Routes */}
+        {/* Public */}
         <Route
           path="/login"
           element={token ? <Navigate to="/dashboard" /> : <Login />}
@@ -23,15 +24,10 @@ function App() {
           element={token ? <Navigate to="/dashboard" /> : <Register />}
         />
 
-        {/* Protected Routes */}
+        {/* Protected */}
         <Route
           path="/dashboard"
           element={token ? <Dashboard /> : <Navigate to="/login" />}
-        />
-
-        <Route
-          path="/chat"
-          element={token ? <ChatPage /> : <Navigate to="/login" />}
         />
 
         {/* Default */}
