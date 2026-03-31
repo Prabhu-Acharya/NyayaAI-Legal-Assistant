@@ -46,7 +46,7 @@ const Dashboard = () => {
 
     try {
       // 🔗 API call to backend
-      const res = await fetch("http://localhost:5000/api/ask", {
+      const res = await fetch("http://localhost:5000/api/query/ask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
