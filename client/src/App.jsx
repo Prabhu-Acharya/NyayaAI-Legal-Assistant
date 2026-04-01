@@ -1,6 +1,7 @@
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import ContractGenerator from "./pages/ContractGenerator"; // ← NEW
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
@@ -18,7 +19,6 @@ function App() {
           path="/login"
           element={token ? <Navigate to="/dashboard" /> : <Login />}
         />
-
         <Route
           path="/register"
           element={token ? <Navigate to="/dashboard" /> : <Register />}
@@ -28,6 +28,12 @@ function App() {
         <Route
           path="/dashboard"
           element={token ? <Dashboard /> : <Navigate to="/login" />}
+        />
+
+        {/* Protected — Contract Generator ← NEW */}
+        <Route
+          path="/contracts"
+          element={token ? <ContractGenerator /> : <Navigate to="/login" />}
         />
 
         {/* Default */}
