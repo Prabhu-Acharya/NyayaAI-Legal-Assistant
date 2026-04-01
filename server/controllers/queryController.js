@@ -73,6 +73,7 @@ Always respond properly.
       model: "llama-3.3-70b-versatile",
       temperature: 0.3,
     });
+    console.log("FULL RESPONSE:", JSON.stringify(response, null, 2));
     console.log("AI MESSAGE:", response.choices[0].message);
     console.log("AI RESPONSE:", response);
 
