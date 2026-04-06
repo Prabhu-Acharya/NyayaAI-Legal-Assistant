@@ -1,34 +1,35 @@
-const express = require("express");
-const router = express.Router();
+const express = require('express');
+const router  = express.Router();
 
-// =============================================================
-// 🧠 QUERY ROUTES — AI legal assistant endpoints
-// =============================================================
-// Base path (set in app.js): /api/query
-// Full endpoint:             POST /api/query/ask
-//
-// FUTURE ROUTES TO ADD HERE:
-//   POST   /history          → save a chat session to MongoDB
-//   GET    /history          → get all past sessions for a user
-//   GET    /history/:id      → get one specific session
-//   DELETE /history/:id      → delete a session
-// =============================================================
+const { registerUser, loginUser } = require('../controllers/userController');
+const protect = require('../middleware/authMiddleware');
+const User    = require('../models/User');
 
-// Auth middleware — verifies JWT token on protected routes
-const protect = require("../middleware/authMiddleware");
+const FREE_CONTRACT_LIMIT = 3;
 
-// Query controller — contains the AI call logic
-const { askQuery } = require("../controllers/queryController");
+router.post('/register', registerUser);
+router.post('/login',    loginUser);
 
-// =============================================================
-// POST /api/query/ask
-// Access: 🔒 Protected (valid JWT required)
-// Body:   { question: "your legal question here" }
-//
-// ✅ FIX: protect middleware was imported but NOT applied before.
-//         Added protect as the second argument so unauthenticated
-//         users cannot call the AI endpoint.
-// =============================================================
-router.post("/ask", protect, askQuery);
+// Protected profile route
+router.get('/profile', protect, (req, res) => {
+  res.json({ message: "Protected route accessed ✅", userId: req.user });
+});
+
+// Usage endpoint — called by PlanUsageBar on mount
+router.get('/usage', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user).select('isPremium contractsUsed');
+    if (!user) return res.status(404).json({ message: 'User not found.' });
+
+    res.json({
+      isPremium:    user.isPremium,
+      used:         user.contractsUsed,
+      limit:        FREE_CONTRACT_LIMIT,
+      limitReached: !user.isPremium && user.contractsUsed >= FREE_CONTRACT_LIMIT,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 module.exports = router;
