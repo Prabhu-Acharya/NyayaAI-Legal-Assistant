@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    password: String,
-    isPremium: {
-        type: Boolean,
-        default: false
-    }
+  name:      { type: String, required: true },
+  email:     { type: String, required: true, unique: true },
+  password:  { type: String, required: true },
+  isPremium: { type: Boolean, default: false },
+
+  // Free-plan usage counter — incremented on each successful generation
+  contractsUsed: { type: Number, default: 0 },
+
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
