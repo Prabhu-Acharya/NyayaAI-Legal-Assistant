@@ -1,6 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// ContractGenerator.jsx  (refactored orchestrator — was the monolithic file)
-// UI state only. All rendering delegated to ContractForm / ContractPreview.
+// ContractGenerator.jsx
 // ─────────────────────────────────────────────────────────────────────────────
 
 import React, { useState, useEffect } from "react";
@@ -8,39 +7,28 @@ import axios from "axios";
 import { CONTRACT_TYPES, ContractTypeSelector, ContractFieldForm, styles } from "../components/ContractForm";
 import { ContractPreview, HistoryList } from "../components/ContractPreview";
 
-// Auth header helper — token stored as "token" in localStorage (matches App.jsx)
+const FREE_LIMIT = 3;
+
 const authHeaders = () => ({
   headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
 });
 
-// ── Top-level layout styles (not shared with children) ───────────────────────
 const layoutStyles = {
   wrapper: {
-    minHeight: "100vh",
+    minHeight: "100%",
     background: "linear-gradient(135deg, #0f0c29 0%, #1a1a2e 50%, #16213e 100%)",
     fontFamily: "'Georgia', serif",
     color: "#e8e0d0",
   },
-  topBar: {
-    background: "rgba(255,255,255,0.04)",
-    borderBottom: "1px solid rgba(201,168,76,0.3)",
-    padding: "16px 40px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backdropFilter: "blur(10px)",
-  },
-  logo:    { fontSize: "22px", fontWeight: "700", color: "#c9a84c", letterSpacing: "1px" },
-  logoSub: { fontSize: "12px", color: "#888", marginTop: "2px", fontFamily: "sans-serif" },
   container: { maxWidth: "1100px", margin: "0 auto", padding: "40px 24px" },
   pageTitle:    { fontSize: "32px", fontWeight: "700", color: "#c9a84c", marginBottom: "6px", letterSpacing: "0.5px" },
   pageSubtitle: { color: "#a0917a", fontSize: "15px", marginBottom: "36px", fontFamily: "sans-serif" },
   stepRow:  { display: "flex", gap: "8px", marginBottom: "36px", flexWrap: "wrap" },
   step: (active, done) => ({
     padding: "8px 18px", borderRadius: "20px", fontSize: "13px", fontFamily: "sans-serif",
-    border:      done ? "1px solid #c9a84c" : active ? "1px solid #c9a84c" : "1px solid #333",
-    background:  done ? "#c9a84c22"         : active ? "#c9a84c18"         : "transparent",
-    color:       done ? "#c9a84c"           : active ? "#c9a84c"           : "#666",
+    border:     done ? "1px solid #c9a84c" : active ? "1px solid #c9a84c" : "1px solid #333",
+    background: done ? "#c9a84c22"         : active ? "#c9a84c18"         : "transparent",
+    color:      done ? "#c9a84c"           : active ? "#c9a84c"           : "#666",
     cursor: done ? "pointer" : "default",
     transition: "all 0.2s",
   }),
@@ -55,23 +43,178 @@ const layoutStyles = {
   }),
 };
 
+// ── PlanUsageBar ──────────────────────────────────────────────────────────────
+function PlanUsageBar({ used, limit, isPremium, onUpgrade }) {
+  if (isPremium) return null;
+
+  const pct       = Math.min((used / limit) * 100, 100);
+  const atLimit   = used >= limit;
+  const remaining = Math.max(limit - used, 0);
+
+  const now = new Date();
+  const resetDate = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+    .toLocaleDateString("en-IN", { day: "numeric", month: "long" });
+
+  return (
+    <div style={{
+      background: "rgba(255,255,255,0.04)",
+      border: `1px solid ${atLimit ? "rgba(226,75,74,0.4)" : "rgba(201,168,76,0.2)"}`,
+      borderRadius: "12px",
+      padding: "14px 16px",
+      marginBottom: "20px",
+      fontFamily: "sans-serif",
+    }}>
+      {/* Top row */}
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+        <span style={{ fontSize: "13px", fontWeight: "500", color: "#d4c5a9" }}>
+          Contract generations
+        </span>
+        <span style={{ fontSize: "13px", color: "#a0917a" }}>
+          <strong style={{ color: atLimit ? "#E24B4A" : "#c9a84c" }}>{used}</strong> / {limit} used
+        </span>
+      </div>
+
+      {/* Progress bar */}
+      <div style={{ height: "6px", background: "rgba(255,255,255,0.08)", borderRadius: "99px", overflow: "hidden", marginBottom: "8px" }}>
+        <div style={{
+          height: "100%",
+          width: `${pct}%`,
+          borderRadius: "99px",
+          background: atLimit ? "#E24B4A" : "linear-gradient(90deg, #c9a84c, #a67c2e)",
+          transition: "width 0.4s cubic-bezier(0.4,0,0.2,1)",
+        }} />
+      </div>
+
+      {/* Hint */}
+      <div style={{ fontSize: "12px", color: "#666" }}>
+        {atLimit ? (
+          <>Limit reached · Resets {resetDate} · <button onClick={onUpgrade} style={{ background: "none", border: "none", color: "#c9a84c", fontSize: "12px", cursor: "pointer", textDecoration: "underline", padding: 0 }}>Upgrade for unlimited</button></>
+        ) : (
+          <>{remaining} generation{remaining !== 1 ? "s" : ""} remaining · <button onClick={onUpgrade} style={{ background: "none", border: "none", color: "#c9a84c", fontSize: "12px", cursor: "pointer", textDecoration: "underline", padding: 0 }}>Upgrade for unlimited</button></>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── PremiumModal ──────────────────────────────────────────────────────────────
+function PremiumModal({ isOpen, onClose }) {
+  if (!isOpen) return null;
+
+  const now = new Date();
+  const resetDate = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+    .toLocaleDateString("en-IN", { day: "numeric", month: "long" });
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)",
+        display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000,
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: "#1a1a2e",
+          border: "1px solid rgba(201,168,76,0.3)",
+          borderRadius: "16px",
+          padding: "32px",
+          width: "380px",
+          maxWidth: "calc(100vw - 32px)",
+          fontFamily: "sans-serif",
+        }}
+      >
+        {/* Icon */}
+        <div style={{ fontSize: "32px", marginBottom: "12px" }}>⭐</div>
+
+        <h2 style={{ fontSize: "18px", fontWeight: "600", color: "#c9a84c", marginBottom: "10px" }}>
+          Free plan limit reached
+        </h2>
+        <p style={{ fontSize: "14px", color: "#a0917a", lineHeight: "1.6", marginBottom: "24px" }}>
+          You've used all <strong style={{ color: "#e8e0d0" }}>3 free contract generations</strong> this month.
+          Upgrade to Pro for unlimited access, or wait until your limit resets on <strong style={{ color: "#e8e0d0" }}>{resetDate}</strong>.
+        </p>
+
+        {/* Plan cards */}
+        <div style={{ display: "flex", gap: "12px", marginBottom: "24px" }}>
+          {/* Free */}
+          <div style={{ flex: 1, border: "1px solid rgba(255,255,255,0.1)", borderRadius: "10px", padding: "14px" }}>
+            <div style={{ fontSize: "12px", color: "#666", marginBottom: "4px" }}>Free</div>
+            <div style={{ fontSize: "20px", fontWeight: "600", color: "#e8e0d0" }}>₹0</div>
+            <div style={{ fontSize: "11px", color: "#555", marginBottom: "10px" }}>/month</div>
+            <div style={{ fontSize: "12px", color: "#888", display: "flex", flexDirection: "column", gap: "4px" }}>
+              <span>✓ 3 generations / mo</span>
+              <span>✓ 5 contract types</span>
+              <span style={{ opacity: 0.4 }}>— E-sign</span>
+            </div>
+          </div>
+
+          {/* Pro */}
+          <div style={{ flex: 1, border: "1px solid #c9a84c", borderRadius: "10px", padding: "14px", background: "rgba(201,168,76,0.08)" }}>
+            <div style={{ fontSize: "12px", color: "#c9a84c", marginBottom: "4px" }}>Pro</div>
+            <div style={{ fontSize: "20px", fontWeight: "600", color: "#e8e0d0" }}>₹499</div>
+            <div style={{ fontSize: "11px", color: "#555", marginBottom: "10px" }}>/month</div>
+            <div style={{ fontSize: "12px", color: "#a0917a", display: "flex", flexDirection: "column", gap: "4px" }}>
+              <span style={{ color: "#c9a84c" }}>✓ Unlimited generations</span>
+              <span style={{ color: "#c9a84c" }}>✓ All contract types</span>
+              <span style={{ color: "#c9a84c" }}>✓ E-sign included</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <button
+          style={{ ...styles.btnPrimary, width: "100%", marginBottom: "10px", opacity: 0.6, cursor: "not-allowed" }}
+          disabled
+        >
+          Upgrade to Pro — ₹499/mo (coming soon)
+        </button>
+        <button
+          onClick={onClose}
+          style={{ ...styles.btnSecondary, width: "100%" }}
+        >
+          Maybe later
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── ContractGenerator ─────────────────────────────────────────────────────────
 export default function ContractGenerator() {
-  const [tab,            setTab]            = useState("generate"); // "generate" | "history"
-  const [step,           setStep]           = useState(1);          // 1 | 2 | 3
+  const [tab,            setTab]            = useState("generate");
+  const [step,           setStep]           = useState(1);
   const [selectedType,   setSelectedType]   = useState("");
   const [formData,       setFormData]       = useState({});
   const [loading,        setLoading]        = useState(false);
-  const [contract,       setContract]       = useState(null);       // { contractId, title, content }
+  const [contract,       setContract]       = useState(null);
   const [history,        setHistory]        = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [error,          setError]          = useState("");
   const [success,        setSuccess]        = useState("");
 
+  // ── Day 2: usage state ─────────────────────────────────────────────────────
+  const [usage,          setUsage]          = useState({ used: 0, limit: FREE_LIMIT, isPremium: false });
+  const [showModal,      setShowModal]      = useState(false);
+
+  // ── Fetch usage on mount ───────────────────────────────────────────────────
+  useEffect(() => {
+    const fetchUsage = async () => {
+      try {
+        const { data } = await axios.get("/api/users/usage", authHeaders());
+        setUsage(data);
+      } catch {
+        // silently fail — bar just shows 0
+      }
+    };
+    fetchUsage();
+  }, []);
+
   useEffect(() => {
     if (tab === "history") loadHistory();
   }, [tab]);
 
-  // ── Data fetching ──────────────────────────────────────────────────────────
   const loadHistory = async () => {
     setHistoryLoading(true);
     try {
@@ -85,6 +228,12 @@ export default function ContractGenerator() {
 
   // ── Generation ─────────────────────────────────────────────────────────────
   const handleGenerate = async () => {
+    // Block at client side before hitting the API
+    if (!usage.isPremium && usage.used >= usage.limit) {
+      setShowModal(true);
+      return;
+    }
+
     const cfg = CONTRACT_TYPES[selectedType];
     if (!cfg) return;
 
@@ -102,18 +251,33 @@ export default function ContractGenerator() {
         { type: selectedType, formData },
         authHeaders()
       );
+
+      // upgradeRequired — open modal instead of plain error text
+      if (data.upgradeRequired) {
+        setShowModal(true);
+        setLoading(false);
+        return;
+      }
+
+      // Update usage bar without a refetch
+      if (data.usage) {
+        setUsage(prev => ({ ...prev, ...data.usage }));
+      }
+
       setContract(data);
       setStep(3);
       setSuccess("Contract generated successfully!");
       setTimeout(() => setSuccess(""), 4000);
     } catch (err) {
-      const msg = err.response?.data?.message || "Generation failed. Please try again.";
-      setError(err.response?.data?.upgradeRequired ? `⭐ ${msg}` : msg);
+      if (err.response?.data?.upgradeRequired) {
+        setShowModal(true);
+      } else {
+        setError(err.response?.data?.message || "Generation failed. Please try again.");
+      }
     }
     setLoading(false);
   };
 
-  // ── History actions ────────────────────────────────────────────────────────
   const handleViewHistory = async (id) => {
     try {
       const { data } = await axios.get(`/api/contracts/${id}`, authHeaders());
@@ -137,22 +301,16 @@ export default function ContractGenerator() {
     }
   };
 
-  // ── Flow helpers ───────────────────────────────────────────────────────────
   const resetFlow = () => {
-    setStep(1);
-    setSelectedType("");
-    setFormData({});
-    setContract(null);
-    setError("");
+    setStep(1); setSelectedType(""); setFormData({}); setContract(null); setError("");
   };
 
   const handleTypeSelect = (type) => {
-    setSelectedType(type);
-    setFormData({});
-    setError("");
+    setSelectedType(type); setFormData({}); setError("");
   };
 
-  // ── Render ─────────────────────────────────────────────────────────────────
+  const atLimit = !usage.isPremium && usage.used >= usage.limit;
+
   return (
     <div style={layoutStyles.wrapper}>
       <style>{`
@@ -163,24 +321,13 @@ export default function ContractGenerator() {
         ::-webkit-scrollbar-thumb { background: #c9a84c44; border-radius: 3px; }
       `}</style>
 
-      {/* ── Top Bar ── */}
-      <div style={layoutStyles.topBar}>
-        <div>
-          <div style={layoutStyles.logo}>⚖ NyayaAI</div>
-          <div style={layoutStyles.logoSub}>AI-Powered Indian Legal Assistant</div>
-        </div>
-        <div style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#666" }}>
-          Indian Contract Act, 1872 Compliant
-        </div>
-      </div>
-
       <div style={layoutStyles.container}>
         <h1 style={layoutStyles.pageTitle}>Contract Generator</h1>
         <p style={layoutStyles.pageSubtitle}>
           Generate legally compliant contracts under Indian law — powered by Groq AI
         </p>
 
-        {/* ── Tabs ── */}
+        {/* Tabs */}
         <div style={layoutStyles.tabs}>
           <button style={layoutStyles.tab(tab === "generate")} onClick={() => setTab("generate")}>
             ✍ Generate Contract
@@ -190,9 +337,17 @@ export default function ContractGenerator() {
           </button>
         </div>
 
-        {/* ── GENERATE TAB ── */}
+        {/* GENERATE TAB */}
         {tab === "generate" && (
           <>
+            {/* Usage bar — always visible on generate tab */}
+            <PlanUsageBar
+              used={usage.used}
+              limit={usage.limit}
+              isPremium={usage.isPremium}
+              onUpgrade={() => setShowModal(true)}
+            />
+
             {/* Step indicators */}
             <div style={layoutStyles.stepRow}>
               {["Select Type", "Fill Details", "Review & Export"].map((label, i) => (
@@ -209,16 +364,14 @@ export default function ContractGenerator() {
             {error   && <div style={styles.alert("error")}>⚠ {error}</div>}
             {success && <div style={styles.alert("success")}>✓ {success}</div>}
 
-            {/* Step 1 */}
             {step === 1 && (
               <ContractTypeSelector
                 selectedType={selectedType}
                 onSelect={handleTypeSelect}
-                onContinue={() => setStep(2)}
+                onContinue={() => atLimit ? setShowModal(true) : setStep(2)}
               />
             )}
 
-            {/* Step 2 */}
             {step === 2 && (
               <ContractFieldForm
                 selectedType={selectedType}
@@ -227,10 +380,10 @@ export default function ContractGenerator() {
                 onBack={() => setStep(1)}
                 onGenerate={handleGenerate}
                 loading={loading}
+                atLimit={atLimit}
               />
             )}
 
-            {/* Step 3 */}
             {step === 3 && contract && (
               <ContractPreview
                 contract={contract}
@@ -241,7 +394,7 @@ export default function ContractGenerator() {
           </>
         )}
 
-        {/* ── HISTORY TAB ── */}
+        {/* HISTORY TAB */}
         {tab === "history" && (
           <HistoryList
             history={history}
@@ -252,6 +405,12 @@ export default function ContractGenerator() {
           />
         )}
       </div>
+
+      {/* Upgrade modal */}
+      <PremiumModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+      />
     </div>
   );
 }
