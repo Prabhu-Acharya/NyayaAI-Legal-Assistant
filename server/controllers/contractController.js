@@ -45,41 +45,45 @@ const generateContract = async (req, res) => {
   try {
     const { type, formData } = req.body;
 
-    if (!type || !CONTRACT_TEMPLATES[type]) {
+    if (!type || !CONTRACT_TEMPLATES[type])
       return res.status(400).json({ message: "Invalid contract type." });
-    }
-    if (!formData) {
+    if (!formData)
       return res.status(400).json({ message: "Form data is required." });
-    }
 
-    // Premium gate — free users capped at FREE_CONTRACT_LIMIT
     const user = await User.findById(req.user);
     if (!user) return res.status(401).json({ message: "User not found." });
 
-    if (!user.isPremium) {
-      const count = await Contract.countDocuments({ user: req.user });
-      if (count >= FREE_CONTRACT_LIMIT) {
-        return res.status(403).json({
-          message: `Free plan allows ${FREE_CONTRACT_LIMIT} contracts. Upgrade to Premium for unlimited access.`,
-          upgradeRequired: true,
-        });
-      }
+    // Premium gate — uses contractsUsed counter (no extra query)
+    if (!user.isPremium && user.contractsUsed >= FREE_CONTRACT_LIMIT) {
+      return res.status(403).json({
+        message: `Free plan allows ${FREE_CONTRACT_LIMIT} contracts. Upgrade to Premium for unlimited access.`,
+        upgradeRequired: true,
+        used:  user.contractsUsed,
+        limit: FREE_CONTRACT_LIMIT,
+      });
     }
 
     const contractText = await generateContractText(type, formData);
 
     const contract = await Contract.create({
-      user: req.user,
+      user:    req.user,
       type,
-      title: `${CONTRACT_TEMPLATES[type]} - ${new Date().toLocaleDateString("en-IN")}`,
+      title:   `${CONTRACT_TEMPLATES[type]} - ${new Date().toLocaleDateString("en-IN")}`,
       formData,
       content: contractText,
     });
 
+    // Increment usage counter after successful generation
+    await User.findByIdAndUpdate(req.user, { $inc: { contractsUsed: 1 } });
+
     res.status(201).json({
       contractId: contract._id,
-      title: contract.title,
-      content: contractText,
+      title:      contract.title,
+      content:    contractText,
+      usage: {
+        used:  user.contractsUsed + 1,
+        limit: FREE_CONTRACT_LIMIT,
+      },
     });
   } catch (err) {
     console.error("Contract generation error:", err);
