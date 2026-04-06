@@ -1,7 +1,8 @@
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import ContractGenerator from "./pages/ContractGenerator"; // ← NEW
+import ContractGenerator from "./pages/ContractGenerator";
+import DashboardLayout from "./layouts/DashboardLayout"; // ← NEW
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
@@ -9,9 +10,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <h1 className="text-center text-2xl font-bold my-4">
-        ⚖️ NyayaAI
-      </h1>
+      {/* ← REMOVE the global <h1> — sidebar owns the brand now */}
 
       <Routes>
         {/* Public */}
@@ -24,17 +23,16 @@ function App() {
           element={token ? <Navigate to="/dashboard" /> : <Register />}
         />
 
-        {/* Protected */}
+        {/* Protected — shared layout wraps both pages */}
         <Route
           path="/dashboard"
-          element={token ? <Dashboard /> : <Navigate to="/login" />}
-        />
+          element={token ? <DashboardLayout /> : <Navigate to="/login" />}
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="contracts" element={<ContractGenerator />} />
+        </Route>
 
-        {/* Protected — Contract Generator ← NEW */}
-        <Route
-          path="/contracts"
-          element={token ? <ContractGenerator /> : <Navigate to="/login" />}
-        />
+        {/* ← REMOVE the old flat /contracts route */}
 
         {/* Default */}
         <Route
