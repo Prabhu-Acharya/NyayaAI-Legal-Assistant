@@ -1,14 +1,7 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// contractController.js
-// Responsibilities:
-//   • Route handler functions (generate, list, getOne, remove, exportPDF, exportDOCX)
-//   • Premium gate enforcement
-//   • protectExport middleware (token via ?token= query for window.open exports)
-// ─────────────────────────────────────────────────────────────────────────────
-
-const jwt = require("jsonwebtoken");
+const jwt      = require("jsonwebtoken");
 const Contract = require("../models/Contract");
-const User = require("../models/User");
+const User     = require("../models/User");
+const logger   = require("../config/logger");
 const {
   CONTRACT_TEMPLATES,
   generateContractText,
@@ -19,18 +12,14 @@ const {
 
 const FREE_CONTRACT_LIMIT = 3;
 
-// ── protectExport ─────────────────────────────────────────────────────────────
-// window.open() cannot send Authorization headers, so export routes accept the
-// JWT as a ?token= query param in addition to the standard Bearer header.
 const protectExport = (req, res, next) => {
   const token =
     (req.headers.authorization?.startsWith("Bearer ")
       ? req.headers.authorization.split(" ")[1]
       : null) || req.query.token;
 
-  if (!token) {
+  if (!token)
     return res.status(401).json({ message: "Not authorized — no token provided ❌" });
-  }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded.id;
@@ -40,7 +29,6 @@ const protectExport = (req, res, next) => {
   }
 };
 
-// ── POST /api/contracts/generate ─────────────────────────────────────────────
 const generateContract = async (req, res) => {
   try {
     const { type, formData } = req.body;
@@ -53,7 +41,6 @@ const generateContract = async (req, res) => {
     const user = await User.findById(req.user);
     if (!user) return res.status(401).json({ message: "User not found." });
 
-    // Premium gate — uses contractsUsed counter (no extra query)
     if (!user.isPremium && user.contractsUsed >= FREE_CONTRACT_LIMIT) {
       return res.status(403).json({
         message: `Free plan allows ${FREE_CONTRACT_LIMIT} contracts. Upgrade to Premium for unlimited access.`,
@@ -73,7 +60,6 @@ const generateContract = async (req, res) => {
       content: contractText,
     });
 
-    // Increment usage counter after successful generation
     await User.findByIdAndUpdate(req.user, { $inc: { contractsUsed: 1 } });
 
     res.status(201).json({
@@ -86,12 +72,11 @@ const generateContract = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Contract generation error:", err);
+    logger.error(`generateContract failed — user:${req.user} — ${err.message}`);
     res.status(500).json({ message: err.message || "Generation failed." });
   }
 };
 
-// ── GET /api/contracts ────────────────────────────────────────────────────────
 const listContracts = async (req, res) => {
   try {
     const contracts = await Contract.find({ user: req.user })
@@ -99,44 +84,43 @@ const listContracts = async (req, res) => {
       .select("_id type title createdAt");
     res.json(contracts);
   } catch (err) {
+    logger.error(`listContracts failed — user:${req.user} — ${err.message}`);
     res.status(500).json({ message: err.message });
   }
 };
 
-// ── GET /api/contracts/:id ────────────────────────────────────────────────────
 const getContract = async (req, res) => {
   try {
     const contract = await Contract.findOne({ _id: req.params.id, user: req.user });
     if (!contract) return res.status(404).json({ message: "Not found." });
     res.json(contract);
   } catch (err) {
+    logger.error(`getContract failed — contract:${req.params.id} — ${err.message}`);
     res.status(500).json({ message: err.message });
   }
 };
 
-// ── DELETE /api/contracts/:id ─────────────────────────────────────────────────
 const deleteContract = async (req, res) => {
   try {
     await Contract.findOneAndDelete({ _id: req.params.id, user: req.user });
     res.json({ message: "Deleted." });
   } catch (err) {
+    logger.error(`deleteContract failed — contract:${req.params.id} — ${err.message}`);
     res.status(500).json({ message: err.message });
   }
 };
 
-// ── GET /api/contracts/:id/export/pdf ─────────────────────────────────────────
 const exportPDF = async (req, res) => {
   try {
     const contract = await Contract.findOne({ _id: req.params.id, user: req.user });
     if (!contract) return res.status(404).json({ message: "Not found." });
     streamContractPDF(contract, res);
   } catch (err) {
-    console.error("PDF export error:", err);
+    logger.error(`exportPDF failed — contract:${req.params.id} — ${err.message}`);
     res.status(500).json({ message: err.message });
   }
 };
 
-// ── GET /api/contracts/:id/export/docx ───────────────────────────────────────
 const exportDOCX = async (req, res) => {
   try {
     const contract = await Contract.findOne({ _id: req.params.id, user: req.user });
@@ -144,17 +128,13 @@ const exportDOCX = async (req, res) => {
 
     const buffer = await buildContractDOCX(contract);
 
-    res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    );
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="${sanitizeFilename(contract.title)}.docx"`
-    );
+    res.setHeader("Content-Type",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    res.setHeader("Content-Disposition",
+      `attachment; filename="${sanitizeFilename(contract.title)}.docx"`);
     res.send(buffer);
   } catch (err) {
-    console.error("DOCX export error:", err);
+    logger.error(`exportDOCX failed — contract:${req.params.id} — ${err.message}`);
     res.status(500).json({ message: err.message });
   }
 };
