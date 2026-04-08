@@ -13,6 +13,15 @@
 
 require("dotenv").config(); // Must be first — loads .env before anything else
 
+// ── Env validation — crash fast if required vars are missing ─────────────────
+const REQUIRED_ENV = ["MONGO_URI", "JWT_SECRET", "GROQ_API_KEY"];
+const missing = REQUIRED_ENV.filter((key) => !process.env[key]);
+if (missing.length) {
+  console.error(`❌ Missing required environment variables: ${missing.join(", ")}`);
+  console.error("Check your .env file against .env.example");
+  process.exit(1);
+}
+
 const app = require("./app");
 const connectDB = require("./config/db");
 
