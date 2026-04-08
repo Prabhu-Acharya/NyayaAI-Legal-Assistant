@@ -21,15 +21,31 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 // ── Contract type display names ───────────────────────────────────────────────
 const CONTRACT_TEMPLATES = {
-  employment:  "Employment Agreement",
-  service:     "Service Agreement",
-  nda:         "Non-Disclosure Agreement",
-  rental:      "Rental / Lease Agreement",
-  sale:        "Sale of Goods Agreement",
+  employment: "Employment Agreement",
+  service: "Service Agreement",
+  nda: "Non-Disclosure Agreement",
+  rental: "Rental / Lease Agreement",
+  sale: "Sale of Goods Agreement",
   partnership: "Partnership Agreement",
-  freelance:   "Freelance / Consulting Agreement",
-  loan:        "Loan Agreement",
+  freelance: "Freelance / Consulting Agreement",
+  loan: "Loan Agreement",
 };
+
+// ── Input sanitiser — strips prompt injection attempts ────────────────────
+function sanitizeFormData(formData) {
+  const MAX_FIELD_LENGTH = 500;
+  const DANGEROUS_CHARS = /[`<>{}\\]/g;
+
+  const sanitized = {};
+  for (const [key, value] of Object.entries(formData)) {
+    if (typeof value !== "string") continue;
+    sanitized[key] = value
+      .replace(DANGEROUS_CHARS, "")   // strip injection chars
+      .slice(0, MAX_FIELD_LENGTH)      // cap field length
+      .trim();
+  }
+  return sanitized;
+}
 
 // ── Prompt builder ────────────────────────────────────────────────────────────
 function buildPrompt(type, formData) {
@@ -54,9 +70,10 @@ Return ONLY the contract text, no commentary.`;
 
 // ── Groq AI generation ────────────────────────────────────────────────────────
 async function generateContractText(type, formData) {
+  const clean = sanitizeFormData(formData);
   const completion = await groq.chat.completions.create({
     model: "llama-3.3-70b-versatile",
-    messages: [{ role: "user", content: buildPrompt(type, formData) }],
+    messages: [{ role: "user", content: buildPrompt(type, clean) }],
     temperature: 0.3,
     max_tokens: 4096,
   });
@@ -241,4 +258,5 @@ module.exports = {
   streamContractPDF,
   buildContractDOCX,
   sanitizeFilename,
+  sanitizeFormData,
 };
