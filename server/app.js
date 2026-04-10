@@ -5,6 +5,7 @@ const cors = require("cors");
 const userRoutes     = require("./routes/userRoutes");
 const queryRoutes    = require("./routes/queryRoutes");
 const contractRoutes = require("./routes/contractRoutes"); // ← NEW
+const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use("/api/users",     userRoutes);
 app.use("/api/query",     queryRoutes);
 app.use("/api/contracts", contractRoutes); // ← NEW
+app.use('/api/payment', paymentRoutes);
 
 app.get("/", (req, res) => {
   res.send("NyayaAI API Running ✅");
