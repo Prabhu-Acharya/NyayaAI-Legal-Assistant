@@ -1,15 +1,14 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // ContractPreview.jsx
-// Responsibilities:
-//   • Step 3: Contract text preview + PDF / DOCX export buttons
-//   • HistoryItem: single row in the "My Contracts" list
-//   • HistoryList: full history tab content (loading, empty, list)
+// Day 6 additions:
+//   • PlaceholderHighlighter — highlights [PLACEHOLDER] tokens in gold
+//   • Copy-to-clipboard button
+//   • PDF download via html2pdf.js
 // ─────────────────────────────────────────────────────────────────────────────
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { styles } from "./ContractForm";
 
-// ── Extra styles only needed in this file ────────────────────────────────────
 const localStyles = {
   contractPreview: {
     background: "#0a0a1a",
@@ -29,6 +28,21 @@ const localStyles = {
   btnDocx: {
     padding: "13px 32px", borderRadius: "8px", border: "none",
     background: "linear-gradient(135deg, #1e5c99, #1a4a7a)",
+    color: "#fff", fontWeight: "700", fontSize: "15px",
+    cursor: "pointer", fontFamily: "sans-serif",
+  },
+  btnCopy: (copied) => ({
+    padding: "13px 24px", borderRadius: "8px",
+    border: `1px solid ${copied ? "#4CAF7D" : "rgba(201,168,76,0.3)"}`,
+    background: copied ? "rgba(76,175,125,0.1)" : "transparent",
+    color: copied ? "#4CAF7D" : "#c9a84c",
+    fontWeight: "600", fontSize: "15px",
+    cursor: "pointer", fontFamily: "sans-serif",
+    transition: "all 0.2s",
+  }),
+  btnPdf: {
+    padding: "13px 24px", borderRadius: "8px", border: "none",
+    background: "linear-gradient(135deg, #7f1d1d, #991b1b)",
     color: "#fff", fontWeight: "700", fontSize: "15px",
     cursor: "pointer", fontFamily: "sans-serif",
   },
@@ -63,33 +77,159 @@ const localStyles = {
   },
 };
 
+// ── PlaceholderHighlighter ────────────────────────────────────────────────────
+// Splits contract text on [PLACEHOLDER] tokens and highlights them in gold
+function PlaceholderHighlighter({ text }) {
+  if (!text) return null;
+
+  const parts = text.split(/(\[[A-Z_\s]+\])/g);
+
+  return (
+    <>
+      {parts.map((part, i) =>
+        /^\[[A-Z_\s]+\]$/.test(part) ? (
+          <mark
+            key={i}
+            style={{
+              background: "rgba(201,168,76,0.2)",
+              color: "#f0d080",
+              borderRadius: "3px",
+              padding: "0 3px",
+              border: "1px solid rgba(201,168,76,0.4)",
+              fontWeight: "600",
+            }}
+          >
+            {part}
+          </mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function openExport(contractId, format) {
   const token = localStorage.getItem("token");
   window.open(`/api/contracts/${contractId}/export/${format}?token=${token}`, "_blank");
 }
 
-// ── Step 3: Contract preview + export ─────────────────────────────────────────
-// Props:
-//   contract   { contractId, title, content }
-//   onNewContract  () => void   — resets flow to step 1
-//   onEditDetails  () => void   — returns to step 2
+// Load html2pdf script dynamically
+function loadHtml2Pdf() {
+  return new Promise((resolve) => {
+    if (window.html2pdf) return resolve(true);
+    if (document.getElementById("html2pdf-script")) {
+      // already loading — wait for it
+      const interval = setInterval(() => {
+        if (window.html2pdf) { clearInterval(interval); resolve(true); }
+      }, 100);
+      return;
+    }
+    const script = document.createElement("script");
+    script.id  = "html2pdf-script";
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+    script.onload  = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
+
+// ── Step 3: Contract preview + export ────────────────────────────────────────
 export function ContractPreview({ contract, onNewContract, onEditDetails }) {
-  const previewRef = useRef(null);
+  const previewRef  = useRef(null);
+  const [copied,    setCopied]    = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
+
+  // ── Copy to clipboard ──────────────────────────────────────────────────────
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(contract.content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      // fallback for older browsers
+      const el = document.createElement("textarea");
+      el.value = contract.content;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
+  };
+
+  // ── PDF download via html2pdf ──────────────────────────────────────────────
+  const handleDownloadPdf = async () => {
+    setPdfLoading(true);
+    const loaded = await loadHtml2Pdf();
+    if (!loaded) {
+      alert("Failed to load PDF library. Check your internet connection.");
+      setPdfLoading(false);
+      return;
+    }
+
+    // Build a clean printable HTML string — no dark background
+    const html = `
+      <div style="
+        font-family: Georgia, serif;
+        font-size: 13px;
+        line-height: 1.8;
+        color: #1a1a1a;
+        padding: 40px;
+        max-width: 800px;
+        margin: 0 auto;
+      ">
+        <h2 style="
+          font-size: 18px;
+          font-weight: 700;
+          margin-bottom: 8px;
+          color: #1a1a1a;
+        ">${contract.title}</h2>
+        <hr style="border: none; border-top: 1px solid #ccc; margin-bottom: 24px;" />
+        <pre style="
+          white-space: pre-wrap;
+          word-break: break-word;
+          font-family: Georgia, serif;
+          font-size: 13px;
+          line-height: 1.8;
+          color: #1a1a1a;
+        ">${contract.content.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</pre>
+        <hr style="border: none; border-top: 1px solid #ccc; margin-top: 32px;" />
+        <p style="font-size: 10px; color: #888; margin-top: 8px;">
+          Generated by NyayaAI · AI-generated document · Please review with a qualified Indian advocate before execution.
+        </p>
+      </div>
+    `;
+
+    const filename = contract.title
+      .replace(/[^a-z0-9]/gi, "_")
+      .replace(/_+/g, "_")
+      .toLowerCase();
+
+    await window.html2pdf()
+      .set({
+        margin:      [10, 10, 10, 10],
+        filename:    `${filename}.pdf`,
+        image:       { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF:       { unit: "mm", format: "a4", orientation: "portrait" },
+      })
+      .from(html)
+      .save();
+
+    setPdfLoading(false);
+  };
 
   return (
     <div style={styles.card}>
       {/* Title row */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-          marginBottom: "20px",
-          flexWrap: "wrap",
-          gap: "12px",
-        }}
-      >
+      <div style={{
+        display: "flex", justifyContent: "space-between",
+        alignItems: "flex-start", marginBottom: "20px",
+        flexWrap: "wrap", gap: "12px",
+      }}>
         <div>
           <div style={{ ...styles.sectionTitle, margin: 0 }}>{contract.title}</div>
           <p style={{ color: "#666", fontSize: "13px", fontFamily: "sans-serif", marginTop: "4px" }}>
@@ -101,19 +241,37 @@ export function ContractPreview({ contract, onNewContract, onEditDetails }) {
         </button>
       </div>
 
-      {/* Contract text */}
+      {/* Contract text with placeholder highlighting */}
       <div style={localStyles.contractPreview} ref={previewRef}>
-        {contract.content}
+        <PlaceholderHighlighter text={contract.content} />
       </div>
 
       {/* Export buttons */}
       <div style={localStyles.exportRow}>
+        {/* Server-side PDF (existing) */}
         <button style={styles.btnPrimary} onClick={() => openExport(contract.contractId, "pdf")}>
           📄 Export PDF
         </button>
+
+        {/* Client-side PDF download via html2pdf */}
+        <button
+          style={localStyles.btnPdf}
+          onClick={handleDownloadPdf}
+          disabled={pdfLoading}
+        >
+          {pdfLoading ? "Generating…" : "⬇ Download PDF"}
+        </button>
+
+        {/* DOCX */}
         <button style={localStyles.btnDocx} onClick={() => openExport(contract.contractId, "docx")}>
           📝 Export DOCX
         </button>
+
+        {/* Copy to clipboard */}
+        <button style={localStyles.btnCopy(copied)} onClick={handleCopy}>
+          {copied ? "✓ Copied!" : "📋 Copy Text"}
+        </button>
+
         <button style={styles.btnSecondary} onClick={onEditDetails}>
           ✏ Edit Details
         </button>
@@ -128,14 +286,9 @@ export function ContractPreview({ contract, onNewContract, onEditDetails }) {
 }
 
 // ── Single history row ────────────────────────────────────────────────────────
-// Props:
-//   contract   { _id, type, title, createdAt }
-//   onView     (id) => void
-//   onDelete   (id) => void
 export function HistoryItem({ contract, onView, onDelete }) {
   return (
     <div style={localStyles.historyItem}>
-      {/* Left: title + metadata */}
       <div style={{ flex: 1 }}>
         <div style={{ fontWeight: "600", fontSize: "14px", marginBottom: "4px" }}>
           {contract.title}
@@ -149,22 +302,14 @@ export function HistoryItem({ contract, onView, onDelete }) {
           </span>
         </div>
       </div>
-
-      {/* Right: actions */}
       <div style={{ display: "flex", gap: "8px" }}>
         <button style={localStyles.btnSuccess} onClick={() => onView(contract._id)}>
           👁 View
         </button>
-        <button
-          style={localStyles.btnGhost("#c9a84c")}
-          onClick={() => openExport(contract._id, "pdf")}
-        >
+        <button style={localStyles.btnGhost("#c9a84c")} onClick={() => openExport(contract._id, "pdf")}>
           PDF
         </button>
-        <button
-          style={localStyles.btnGhost("#6ea8d4")}
-          onClick={() => openExport(contract._id, "docx")}
-        >
+        <button style={localStyles.btnGhost("#6ea8d4")} onClick={() => openExport(contract._id, "docx")}>
           DOCX
         </button>
         <button style={localStyles.btnDanger} onClick={() => onDelete(contract._id)}>
@@ -176,12 +321,6 @@ export function HistoryItem({ contract, onView, onDelete }) {
 }
 
 // ── Full history tab ──────────────────────────────────────────────────────────
-// Props:
-//   history         Contract[]
-//   loading         boolean
-//   onView          (id) => void
-//   onDelete        (id) => void
-//   onGoGenerate    () => void   — CTA when list is empty
 export function HistoryList({ history, loading, onView, onDelete, onGoGenerate }) {
   if (loading) {
     return (
