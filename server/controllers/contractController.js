@@ -41,6 +41,16 @@ const generateContract = async (req, res) => {
     const user = await User.findById(req.user);
     if (!user) return res.status(401).json({ message: "User not found." });
 
+    // ── Auto-reset usage if a new month has started ───────────────────────
+    const now       = new Date();
+    const resetDate = new Date(user.usageResetDate);
+    if (now.getFullYear() > resetDate.getFullYear() || now.getMonth() > resetDate.getMonth()) {
+      user.contractsUsed  = 0;
+      user.usageResetDate = now;
+      await user.save();
+    }
+    // ─────────────────────────────────────────────────────────────────────
+
     if (!user.isPremium && user.contractsUsed >= FREE_CONTRACT_LIMIT) {
       return res.status(403).json({
         message: `Free plan allows ${FREE_CONTRACT_LIMIT} contracts. Upgrade to Premium for unlimited access.`,
