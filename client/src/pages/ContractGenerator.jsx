@@ -22,14 +22,14 @@ const layoutStyles = {
     color: "#e8e0d0",
   },
   container: { maxWidth: "1100px", margin: "0 auto", padding: "40px 24px" },
-  pageTitle:    { fontSize: "32px", fontWeight: "700", color: "#c9a84c", marginBottom: "6px", letterSpacing: "0.5px" },
+  pageTitle: { fontSize: "32px", fontWeight: "700", color: "#c9a84c", marginBottom: "6px", letterSpacing: "0.5px" },
   pageSubtitle: { color: "#a0917a", fontSize: "15px", marginBottom: "36px", fontFamily: "sans-serif" },
-  stepRow:  { display: "flex", gap: "8px", marginBottom: "36px", flexWrap: "wrap" },
+  stepRow: { display: "flex", gap: "8px", marginBottom: "36px", flexWrap: "wrap" },
   step: (active, done) => ({
     padding: "8px 18px", borderRadius: "20px", fontSize: "13px", fontFamily: "sans-serif",
-    border:     done ? "1px solid #c9a84c" : active ? "1px solid #c9a84c" : "1px solid #333",
-    background: done ? "#c9a84c22"         : active ? "#c9a84c18"         : "transparent",
-    color:      done ? "#c9a84c"           : active ? "#c9a84c"           : "#666",
+    border: done ? "1px solid #c9a84c" : active ? "1px solid #c9a84c" : "1px solid #333",
+    background: done ? "#c9a84c22" : active ? "#c9a84c18" : "transparent",
+    color: done ? "#c9a84c" : active ? "#c9a84c" : "#666",
     cursor: done ? "pointer" : "default",
     transition: "all 0.2s",
   }),
@@ -45,17 +45,17 @@ const layoutStyles = {
 };
 
 // ── PlanUsageBar ──────────────────────────────────────────────────────────────
-function PlanUsageBar({ used, limit, isPremium, onUpgrade }) {
+function PlanUsageBar({ used, limit, isPremium, resetDate, onUpgrade }) {
   if (isPremium) return null;
 
-  const pct       = Math.min((used / limit) * 100, 100);
-  const atLimit   = used >= limit;
+  const pct = Math.min((used / limit) * 100, 100);
+  const atLimit = used >= limit;
   const remaining = Math.max(limit - used, 0);
 
-  const now = new Date();
-  const resetDate = new Date(now.getFullYear(), now.getMonth() + 1, 1)
-    .toLocaleDateString("en-IN", { day: "numeric", month: "long" });
-
+  const formattedResetDate = resetDate
+    ? new Date(resetDate).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })
+    : new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)
+      .toLocaleDateString("en-IN", { day: "numeric", month: "long" });
   return (
     <div style={{
       background: "rgba(255,255,255,0.04)",
@@ -89,7 +89,7 @@ function PlanUsageBar({ used, limit, isPremium, onUpgrade }) {
       {/* Hint */}
       <div style={{ fontSize: "12px", color: "#666" }}>
         {atLimit ? (
-          <>Limit reached · Resets {resetDate} · <button onClick={onUpgrade} style={{ background: "none", border: "none", color: "#c9a84c", fontSize: "12px", cursor: "pointer", textDecoration: "underline", padding: 0 }}>Upgrade for unlimited</button></>
+          <>Limit reached · Resets {formattedResetDate} · <button onClick={onUpgrade} style={{ background: "none", border: "none", color: "#c9a84c", fontSize: "12px", cursor: "pointer", textDecoration: "underline", padding: 0 }}>Upgrade for unlimited</button></>
         ) : (
           <>{remaining} generation{remaining !== 1 ? "s" : ""} remaining · <button onClick={onUpgrade} style={{ background: "none", border: "none", color: "#c9a84c", fontSize: "12px", cursor: "pointer", textDecoration: "underline", padding: 0 }}>Upgrade for unlimited</button></>
         )}
@@ -102,20 +102,20 @@ function PlanUsageBar({ used, limit, isPremium, onUpgrade }) {
 
 // ── ContractGenerator ─────────────────────────────────────────────────────────
 export default function ContractGenerator() {
-  const [tab,            setTab]            = useState("generate");
-  const [step,           setStep]           = useState(1);
-  const [selectedType,   setSelectedType]   = useState("");
-  const [formData,       setFormData]       = useState({});
-  const [loading,        setLoading]        = useState(false);
-  const [contract,       setContract]       = useState(null);
-  const [history,        setHistory]        = useState([]);
+  const [tab, setTab] = useState("generate");
+  const [step, setStep] = useState(1);
+  const [selectedType, setSelectedType] = useState("");
+  const [formData, setFormData] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [contract, setContract] = useState(null);
+  const [history, setHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
-  const [error,          setError]          = useState("");
-  const [success,        setSuccess]        = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   // ── Day 2: usage state ─────────────────────────────────────────────────────
-  const [usage,          setUsage]          = useState({ used: 0, limit: FREE_LIMIT, isPremium: false });
-  const [showModal,      setShowModal]      = useState(false);
+  const [usage, setUsage] = useState({ used: 0, limit: FREE_LIMIT, isPremium: false, resetDate: null });
+  const [showModal, setShowModal] = useState(false);
 
   // ── Fetch usage on mount ───────────────────────────────────────────────────
   useEffect(() => {
@@ -264,9 +264,9 @@ export default function ContractGenerator() {
               used={usage.used}
               limit={usage.limit}
               isPremium={usage.isPremium}
+              resetDate={usage.resetDate}
               onUpgrade={() => setShowModal(true)}
             />
-
             {/* Step indicators */}
             <div style={layoutStyles.stepRow}>
               {["Select Type", "Fill Details", "Review & Export"].map((label, i) => (
@@ -280,7 +280,7 @@ export default function ContractGenerator() {
               ))}
             </div>
 
-            {error   && <div style={styles.alert("error")}>⚠ {error}</div>}
+            {error && <div style={styles.alert("error")}>⚠ {error}</div>}
             {success && <div style={styles.alert("success")}>✓ {success}</div>}
 
             {step === 1 && (
