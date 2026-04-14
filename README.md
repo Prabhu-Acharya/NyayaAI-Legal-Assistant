@@ -1,43 +1,54 @@
-# NyayaAI -- Your Legal Assistant ⚖️
+# ⚖️ NyayaAI
 
-An AI-powered legal assistant built using MERN stack.
+AI-powered legal assistant for Indian businesses & startups. Built on MERN + Groq AI.
 
----
+## Features
 
-## 🚀 Features
-- User Registration & Login
-- Secure Authentication (JWT + bcrypt)
-- Protected Routes
-- Dashboard with Query System
+- 🤖 AI Legal Chat — powered by Groq Llama 3.3 70B
+- 📄 Contract Generator — 5 contract types, Indian law compliant
+- 💳 Payments — Razorpay integration, free/premium plans
+- 📁 Chat History — persistent sessions per user
+- 🔐 JWT Auth — secure register/login
 
----
+## Tech Stack
 
-## 🧠 Tech Stack
-- Frontend: React + Vite
-- Backend: Node.js + Express
-- Database: MongoDB
-- Auth: JWT
+**Frontend:** React 19, Vite, React Router v7, Axios  
+**Backend:** Node.js, Express 5, MongoDB, Mongoose  
+**AI:** Groq SDK, Llama 3.3 70B  
+**Payments:** Razorpay  
 
----
+## Local Setup
 
-## ⚙️ Setup Instructions
+### Prerequisites
+- Node.js 18+
+- MongoDB (local or Atlas)
+- Groq API key
+- Razorpay account
 
-### 1. Clone Repo
-git clone https://github.com/Prabhu-Acharya/NyayaAI-Legal-Assistant.git
+### Backend
 
-### 2. Backend Setup
+```bash
 cd server
 npm install
+cp .env.example .env
+# Fill in your .env values
 npm start
+```
 
-### 3. Frontend Setup
+### Frontend
+
+```bash
 cd client
 npm install
+cp .env.example .env
+# Fill in your .env values
 npm run dev
+```
 
----
+## Environment Variables
 
-## 🔥 Future Scope
-- AI Legal Answers (Next Step)
-- Chat History
-- Better UI (Tailwind)
+See `server/.env.example` and `client/.env.example` for required variables.
+
+## License
+
+MIT
