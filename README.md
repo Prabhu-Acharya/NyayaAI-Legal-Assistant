@@ -47,7 +47,7 @@ npm run dev
 
 ## Environment Variables
 
-See `server/.env.example` and `client/.env.example` for required variables.
+See `server/.env.example` and `client/.env.example` for required variables. 
 
 ## License
 
