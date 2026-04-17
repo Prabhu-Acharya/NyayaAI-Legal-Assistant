@@ -21,86 +21,22 @@
     --blue: #5A9BE0;
     --orange: #E09A5A;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--dark); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.7; }
 
-  body {
-    background: var(--dark);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    line-height: 1.7;
-  }
-
-  /* ── HEADER ── */
-  .hero {
-    background: var(--dark2);
-    border-bottom: 1px solid var(--border);
-    padding: 60px 48px 48px;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '⚖';
-    position: absolute;
-    right: -20px;
-    top: -40px;
-    font-size: 280px;
-    opacity: 0.03;
-    pointer-events: none;
-  }
-  .hero-tag {
-    display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    color: var(--gold);
-    background: rgba(201,168,76,0.1);
-    border: 1px solid var(--border);
-    padding: 4px 12px;
-    border-radius: 2px;
-    margin-bottom: 20px;
-  }
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 52px;
-    font-weight: 900;
-    line-height: 1.1;
-    color: #fff;
-    margin-bottom: 12px;
-  }
+  .hero { background: var(--dark2); border-bottom: 1px solid var(--border); padding: 60px 48px 48px; position: relative; overflow: hidden; }
+  .hero::before { content: '⚖'; position: absolute; right: -20px; top: -40px; font-size: 280px; opacity: 0.03; pointer-events: none; }
+  .hero-tag { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--gold); background: rgba(201,168,76,0.1); border: 1px solid var(--border); padding: 4px 12px; border-radius: 2px; margin-bottom: 20px; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: 52px; font-weight: 900; line-height: 1.1; color: #fff; margin-bottom: 12px; }
   .hero h1 span { color: var(--gold); }
-  .hero p {
-    font-size: 16px;
-    color: var(--text-muted);
-    max-width: 600px;
-  }
+  .hero p { font-size: 16px; color: var(--text-muted); max-width: 600px; }
 
-  /* ── LAYOUT ── */
   .container { max-width: 1100px; margin: 0 auto; padding: 0 48px 80px; }
 
-  /* ── PROGRESS BAR ── */
-  .progress-section {
-    background: var(--dark2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 32px;
-    margin: 40px 0;
-  }
-  .progress-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    color: var(--gold);
-    margin-bottom: 24px;
-  }
+  .progress-section { background: var(--dark2); border: 1px solid var(--border); border-radius: 8px; padding: 32px; margin: 40px 0; }
+  .progress-title { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--gold); margin-bottom: 24px; }
   .progress-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
-  .stat-box {
-    background: var(--dark3);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 20px;
-    text-align: center;
-  }
+  .stat-box { background: var(--dark3); border: 1px solid var(--border); border-radius: 6px; padding: 20px; text-align: center; }
   .stat-num { font-size: 32px; font-weight: 600; font-family: 'Playfair Display', serif; }
   .stat-num.green { color: var(--green); }
   .stat-num.gold { color: var(--gold); }
@@ -108,247 +44,82 @@
   .stat-num.blue { color: var(--blue); }
   .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; letter-spacing: 0.05em; }
 
-  .phase-progress { margin-top: 8px; }
   .phase-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
-  .phase-name { font-size: 13px; color: var(--text-muted); width: 180px; flex-shrink: 0; }
+  .phase-name { font-size: 13px; color: var(--text-muted); width: 200px; flex-shrink: 0; }
   .bar-track { flex: 1; height: 6px; background: var(--dark4); border-radius: 3px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
+  .bar-fill { height: 100%; border-radius: 3px; }
   .bar-fill.done { background: var(--green); }
   .bar-fill.partial { background: var(--gold); }
-  .bar-fill.todo { background: var(--dark4); width: 0% !important; }
   .bar-pct { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted); width: 36px; text-align: right; }
 
-  /* ── SECTION ── */
   .section { margin-top: 48px; }
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 24px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .section-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--gold);
-    background: rgba(201,168,76,0.1);
-    border: 1px solid var(--border);
-    padding: 3px 8px;
-    border-radius: 2px;
-  }
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
-    color: #fff;
-  }
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .section-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); background: rgba(201,168,76,0.1); border: 1px solid var(--border); padding: 3px 8px; border-radius: 2px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 26px; color: #fff; }
 
-  /* ── FEATURE CARDS ── */
   .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .feature-card {
-    background: var(--dark2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 24px;
-    position: relative;
-    overflow: hidden;
-  }
-  .feature-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 3px; height: 100%;
-  }
+  .feature-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 8px; padding: 24px; position: relative; overflow: hidden; }
+  .feature-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; }
   .feature-card.done::before { background: var(--green); }
   .feature-card.partial::before { background: var(--gold); }
   .feature-card.todo::before { background: var(--dark4); }
   .feature-card.priority::before { background: var(--blue); }
-
-  .feature-badge {
-    display: inline-block;
-    font-size: 10px;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.1em;
-    padding: 3px 8px;
-    border-radius: 2px;
-    margin-bottom: 10px;
-  }
+  .feature-badge { display: inline-block; font-size: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 2px; margin-bottom: 10px; }
   .badge-done { background: rgba(76,175,125,0.15); color: var(--green); border: 1px solid rgba(76,175,125,0.3); }
   .badge-partial { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid var(--border); }
   .badge-todo { background: rgba(224,90,90,0.1); color: var(--red); border: 1px solid rgba(224,90,90,0.2); }
   .badge-next { background: rgba(90,155,224,0.15); color: var(--blue); border: 1px solid rgba(90,155,224,0.3); }
-
   .feature-name { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 6px; }
   .feature-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
   .feature-items { margin-top: 10px; padding-left: 0; list-style: none; }
-  .feature-items li {
-    font-size: 12px;
-    color: var(--text-muted);
-    padding: 3px 0;
-    padding-left: 14px;
-    position: relative;
-  }
+  .feature-items li { font-size: 12px; color: var(--text-muted); padding: 3px 0 3px 14px; position: relative; }
   .feature-items li::before { content: '→'; position: absolute; left: 0; color: var(--gold); font-size: 10px; top: 4px; }
 
-  /* ── ROADMAP ── */
   .roadmap { display: flex; flex-direction: column; gap: 0; }
-  .roadmap-item {
-    display: flex;
-    gap: 24px;
-    position: relative;
-  }
-  .roadmap-item:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: 19px;
-    top: 44px;
-    width: 1px;
-    height: calc(100% - 12px);
-    background: var(--border);
-  }
-  .roadmap-dot {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    background: var(--dark2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--gold);
-    flex-shrink: 0;
-    margin-top: 2px;
-    z-index: 1;
-  }
+  .roadmap-item { display: flex; gap: 24px; position: relative; }
+  .roadmap-item:not(:last-child)::after { content: ''; position: absolute; left: 19px; top: 44px; width: 1px; height: calc(100% - 12px); background: var(--border); }
+  .roadmap-dot { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--border); background: var(--dark2); display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gold); flex-shrink: 0; margin-top: 2px; z-index: 1; }
   .roadmap-dot.done-dot { border-color: var(--green); color: var(--green); background: rgba(76,175,125,0.1); }
   .roadmap-dot.active-dot { border-color: var(--gold); background: rgba(201,168,76,0.1); }
   .roadmap-content { padding-bottom: 32px; flex: 1; }
-  .roadmap-week {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--text-muted);
-    letter-spacing: 0.1em;
-    margin-bottom: 4px;
-  }
+  .roadmap-week { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.1em; margin-bottom: 4px; }
   .roadmap-title { font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 8px; }
   .roadmap-tasks { display: flex; flex-wrap: wrap; gap: 6px; }
-  .task-chip {
-    font-size: 12px;
-    padding: 4px 10px;
-    border-radius: 2px;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    background: var(--dark3);
-    font-family: 'JetBrains Mono', monospace;
-  }
+  .task-chip { font-size: 12px; padding: 4px 10px; border-radius: 2px; border: 1px solid var(--border); color: var(--text-muted); background: var(--dark3); font-family: 'JetBrains Mono', monospace; }
   .task-chip.done-chip { border-color: rgba(76,175,125,0.3); color: var(--green); background: rgba(76,175,125,0.05); text-decoration: line-through; opacity: 0.7; }
   .task-chip.active-chip { border-color: rgba(201,168,76,0.4); color: var(--gold); background: rgba(201,168,76,0.05); }
 
-  /* ── TECH STACK ── */
   .stack-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .stack-card {
-    background: var(--dark2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
-  }
-  .stack-layer {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    color: var(--gold);
-    margin-bottom: 10px;
-  }
+  .stack-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+  .stack-layer { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--gold); margin-bottom: 10px; }
   .stack-items { display: flex; flex-wrap: wrap; gap: 6px; }
-  .stack-tag {
-    font-size: 12px;
-    padding: 3px 8px;
-    background: var(--dark4);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
-  }
+  .stack-tag { font-size: 12px; padding: 3px 8px; background: var(--dark4); border: 1px solid var(--border); border-radius: 3px; color: var(--text); font-family: 'JetBrains Mono', monospace; }
 
-  /* ── LAW TABLE ── */
-  .law-table { width: 100%; border-collapse: collapse; }
-  .law-table th {
-    text-align: left;
-    padding: 10px 16px;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: var(--gold);
-    font-family: 'JetBrains Mono', monospace;
-    background: var(--dark3);
-    border-bottom: 1px solid var(--border);
-  }
-  .law-table td {
-    padding: 12px 16px;
-    font-size: 13px;
-    color: var(--text-muted);
-    border-bottom: 1px solid rgba(201,168,76,0.08);
-  }
-  .law-table td:first-child { color: var(--text); font-weight: 500; }
-  .law-table tr:hover td { background: var(--dark2); }
-
-  /* ── FILE TREE ── */
-  .file-tree {
-    background: var(--dark2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 24px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    line-height: 2;
-  }
+  .file-tree { background: var(--dark2); border: 1px solid var(--border); border-radius: 8px; padding: 24px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 2; }
   .tree-dir { color: var(--gold); }
   .tree-file { color: var(--text-muted); }
   .tree-file.new { color: var(--blue); }
   .tree-file.done { color: var(--green); }
   .tree-indent { padding-left: 20px; }
-  .tree-label {
-    display: inline-block;
-    font-size: 9px;
-    padding: 1px 5px;
-    border-radius: 2px;
-    margin-left: 8px;
-    vertical-align: middle;
-  }
+  .tree-label { display: inline-block; font-size: 9px; padding: 1px 5px; border-radius: 2px; margin-left: 8px; vertical-align: middle; }
   .lbl-done { background: rgba(76,175,125,0.15); color: var(--green); }
   .lbl-new { background: rgba(90,155,224,0.15); color: var(--blue); }
 
-  /* ── DEPS ── */
+  .law-table { width: 100%; border-collapse: collapse; }
+  .law-table th { text-align: left; padding: 10px 16px; font-size: 11px; letter-spacing: 0.1em; color: var(--gold); font-family: 'JetBrains Mono', monospace; background: var(--dark3); border-bottom: 1px solid var(--border); }
+  .law-table td { padding: 12px 16px; font-size: 13px; color: var(--text-muted); border-bottom: 1px solid rgba(201,168,76,0.08); }
+  .law-table td:first-child { color: var(--text); font-weight: 500; }
+  .law-table tr:hover td { background: var(--dark2); }
+
   .deps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .deps-card {
-    background: var(--dark2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
-  }
+  .deps-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
   .deps-title { font-size: 13px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-bottom: 12px; }
-  .dep-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 7px 0;
-    border-bottom: 1px solid rgba(201,168,76,0.07);
-  }
+  .dep-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid rgba(201,168,76,0.07); }
   .dep-row:last-child { border-bottom: none; }
   .dep-name { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text); }
   .dep-purpose { font-size: 12px; color: var(--text-muted); }
 
-  /* ── FOOTER ── */
-  .footer {
-    margin-top: 60px;
-    padding: 32px 48px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--dark2);
-  }
+  .footer { margin-top: 60px; padding: 32px 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--dark2); }
   .footer-brand { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gold); }
   .footer-note { font-size: 12px; color: var(--text-muted); }
 
@@ -366,23 +137,22 @@
 </head>
 <body>
 
-<!-- HERO -->
 <div class="hero">
-  <div class="hero-tag">DEVELOPMENT PLAN v1.0 — INDIAN LEGALTECH</div>
+  <div class="hero-tag">DEVELOPMENT PLAN v2.0 — INDIAN LEGALTECH — UPDATED APR 2026</div>
   <h1>NyayaAI <span>Platform</span></h1>
-  <p>Full-stack AI legal assistant for Indian businesses & startups — built on MERN + Groq AI, compliant with Indian Constitution & law.</p>
+  <p>Full-stack AI legal assistant for Indian businesses & startups — built on MERN + Groq AI, compliant with Indian Contract Act & Indian law.</p>
 </div>
 
 <div class="container">
 
-  <!-- PROGRESS OVERVIEW -->
+  <!-- PROGRESS -->
   <div class="progress-section">
-    <div class="progress-title">Current Progress</div>
+    <div class="progress-title">Current Progress — April 13, 2026</div>
     <div class="progress-grid">
-      <div class="stat-box"><div class="stat-num green">3</div><div class="stat-label">Features Done</div></div>
-      <div class="stat-box"><div class="stat-num gold">2</div><div class="stat-label">In Progress</div></div>
-      <div class="stat-box"><div class="stat-num red">5</div><div class="stat-label">To Build</div></div>
-      <div class="stat-box"><div class="stat-num blue">30%</div><div class="stat-label">MVP Complete</div></div>
+      <div class="stat-box"><div class="stat-num green">7</div><div class="stat-label">Features Done</div></div>
+      <div class="stat-box"><div class="stat-num gold">1</div><div class="stat-label">In Progress</div></div>
+      <div class="stat-box"><div class="stat-num red">6</div><div class="stat-label">To Build</div></div>
+      <div class="stat-box"><div class="stat-num blue">65%</div><div class="stat-label">MVP Complete</div></div>
     </div>
     <div class="phase-progress">
       <div class="phase-row">
@@ -392,80 +162,150 @@
       </div>
       <div class="phase-row">
         <div class="phase-name">AI Legal Chat</div>
-        <div class="bar-track"><div class="bar-fill done" style="width:90%"></div></div>
-        <div class="bar-pct">90%</div>
+        <div class="bar-track"><div class="bar-fill done" style="width:100%"></div></div>
+        <div class="bar-pct">100%</div>
       </div>
       <div class="phase-row">
         <div class="phase-name">Contract Generator</div>
-        <div class="bar-track"><div class="bar-fill partial" style="width:5%"></div></div>
-        <div class="bar-pct">5%</div>
+        <div class="bar-track"><div class="bar-fill done" style="width:100%"></div></div>
+        <div class="bar-pct">100%</div>
       </div>
       <div class="phase-row">
-        <div class="phase-name">Document Analyzer</div>
-        <div class="bar-track"><div class="bar-fill todo" style="width:0%"></div></div>
-        <div class="bar-pct">0%</div>
+        <div class="phase-name">Payments & Usage Gating</div>
+        <div class="bar-track"><div class="bar-fill done" style="width:100%"></div></div>
+        <div class="bar-pct">100%</div>
       </div>
       <div class="phase-row">
-        <div class="phase-name">Case Research</div>
-        <div class="bar-track"><div class="bar-fill todo" style="width:0%"></div></div>
-        <div class="bar-pct">0%</div>
+        <div class="phase-name">Monthly Usage Reset</div>
+        <div class="bar-track"><div class="bar-fill done" style="width:100%"></div></div>
+        <div class="bar-pct">100%</div>
       </div>
       <div class="phase-row">
         <div class="phase-name">UI Polish</div>
         <div class="bar-track"><div class="bar-fill partial" style="width:20%"></div></div>
         <div class="bar-pct">20%</div>
       </div>
+      <div class="phase-row">
+        <div class="phase-name">Chat History</div>
+        <div class="bar-track"><div class="bar-fill partial" style="width:0%"></div></div>
+        <div class="bar-pct">0%</div>
+      </div>
+      <div class="phase-row">
+        <div class="phase-name">Document Analyzer</div>
+        <div class="bar-track"><div class="bar-fill partial" style="width:0%"></div></div>
+        <div class="bar-pct">0%</div>
+      </div>
+      <div class="phase-row">
+        <div class="phase-name">Deploy & Hardening</div>
+        <div class="bar-track"><div class="bar-fill partial" style="width:0%"></div></div>
+        <div class="bar-pct">0%</div>
+      </div>
     </div>
   </div>
 
-  <!-- SECTION 1: MVP FEATURES -->
+  <!-- SECTION 1: FEATURES -->
   <div class="section">
     <div class="section-header">
       <span class="section-num">01</span>
-      <h2 class="section-title">MVP Features</h2>
+      <h2 class="section-title">Feature Status</h2>
     </div>
     <div class="feature-grid">
+
       <div class="feature-card done">
         <div class="feature-badge badge-done">✓ DONE</div>
         <div class="feature-name">Auth & Onboarding</div>
         <div class="feature-desc">JWT + bcrypt, protected routes, MongoDB user model.</div>
         <ul class="feature-items">
           <li>Register / Login working</li>
-          <li>JWT secret moved to .env</li>
-          <li>Protected middleware applied</li>
+          <li>JWT secret from .env</li>
+          <li>authMiddleware on all protected routes</li>
         </ul>
       </div>
+
       <div class="feature-card done">
         <div class="feature-badge badge-done">✓ DONE</div>
         <div class="feature-name">AI Legal Chat Assistant</div>
-        <div class="feature-desc">Groq Llama 3.3 70B with Indian legal system prompt. Markdown rendering, typing effect.</div>
+        <div class="feature-desc">Groq Llama 3.3 70B with Indian legal system prompt. Markdown rendering.</div>
         <ul class="feature-items">
           <li>Hindi / Hinglish / English support</li>
           <li>Structured legal response format</li>
           <li>Chat UI with ChatBubble component</li>
         </ul>
       </div>
+
+      <div class="feature-card done">
+        <div class="feature-badge badge-done">✓ DONE</div>
+        <div class="feature-name">Contract Generator</div>
+        <div class="feature-desc">AI-powered Indian law contract drafting. 5 contract types, PDF + DOCX export.</div>
+        <ul class="feature-items">
+          <li>NDA, Employment, Service, Rental, Freelance</li>
+          <li>Indian Contract Act 1872 compliant</li>
+          <li>PDF + DOCX export</li>
+          <li>Contract history + delete</li>
+        </ul>
+      </div>
+
+      <div class="feature-card done">
+        <div class="feature-badge badge-done">✓ DONE</div>
+        <div class="feature-name">Payments & Usage Gating</div>
+        <div class="feature-desc">Razorpay integration with free/premium plan enforcement.</div>
+        <ul class="feature-items">
+          <li>Razorpay order creation + signature verify</li>
+          <li>isPremium flips on successful payment</li>
+          <li>3 contract free limit enforced client + server</li>
+          <li>PlanUsageBar + PremiumModal</li>
+        </ul>
+      </div>
+
+      <div class="feature-card done">
+        <div class="feature-badge badge-done">✓ DONE</div>
+        <div class="feature-name">Monthly Usage Reset</div>
+        <div class="feature-desc">Auto-resets contractsUsed counter every month.</div>
+        <ul class="feature-items">
+          <li>usageResetDate field on User model</li>
+          <li>Auto-reset on generateContract call</li>
+          <li>Accurate reset date shown in usage bar</li>
+          <li>Tested via Compass backdating</li>
+        </ul>
+      </div>
+
       <div class="feature-card partial">
-        <div class="feature-badge badge-partial">⟳ PARTIAL</div>
+        <div class="feature-badge badge-partial">⟳ IN PROGRESS</div>
+        <div class="feature-name">UI Polish — Day 6</div>
+        <div class="feature-desc">Contract preview enhancements and UX improvements.</div>
+        <ul class="feature-items">
+          <li>PlaceholderHighlighter — [PLACEHOLDER] tokens</li>
+          <li>Copy-to-clipboard on contract preview</li>
+          <li>PDF download via html2pdf</li>
+          <li>Loading skeleton on usage bar mount</li>
+          <li>React error boundary</li>
+        </ul>
+      </div>
+
+      <div class="feature-card todo">
+        <div class="feature-badge badge-todo">✗ TODO</div>
+        <div class="feature-name">Security Hardening</div>
+        <div class="feature-desc">Must-have before any real users or production deploy.</div>
+        <ul class="feature-items">
+          <li>express-validator on all POST routes</li>
+          <li>helmet.js + express-rate-limit</li>
+          <li>JWT refresh tokens (replace 7d expiry)</li>
+          <li>Razorpay webhook (prod-grade verify)</li>
+        </ul>
+      </div>
+
+      <div class="feature-card todo">
+        <div class="feature-badge badge-todo">✗ TODO</div>
         <div class="feature-name">Chat History Persistence</div>
         <div class="feature-desc">Messages lost on refresh. Need ChatSession model + save/load API.</div>
         <ul class="feature-items">
           <li>ChatSession MongoDB model</li>
           <li>Save messages per user</li>
           <li>Session sidebar in UI</li>
+          <li>Navbar + Dashboard redesign</li>
         </ul>
       </div>
-      <div class="feature-card priority">
-        <div class="feature-badge badge-next">⟶ NEXT</div>
-        <div class="feature-name">Contract Generator</div>
-        <div class="feature-desc">AI-powered Indian law contract drafting. 4 contract types with PDF/DOCX export.</div>
-        <ul class="feature-items">
-          <li>NDA, Employment, SaaS, Freelance</li>
-          <li>Indian Contract Act 1872 compliant</li>
-          <li>PDF + DOCX export</li>
-          <li>INR currency, Indian jurisdiction</li>
-        </ul>
-      </div>
+
       <div class="feature-card todo">
         <div class="feature-badge badge-todo">✗ TODO</div>
         <div class="feature-name">Document Analyzer</div>
@@ -477,133 +317,55 @@
           <li>Downloadable analysis report</li>
         </ul>
       </div>
+
       <div class="feature-card todo">
         <div class="feature-badge badge-todo">✗ TODO</div>
-        <div class="feature-name">Case Research & Summarization</div>
+        <div class="feature-name">India-Specific Moat Features</div>
+        <div class="feature-desc">Features that separate NyayaAI from every other contract tool.</div>
+        <ul class="feature-items">
+          <li>Multi-language contracts — Hindi + regional</li>
+          <li>IPC / BNS section citations in contracts</li>
+          <li>Contract risk scoring — 0–100</li>
+          <li>WhatsApp delivery via Twilio</li>
+          <li>Aadhaar e-sign integration</li>
+        </ul>
+      </div>
+
+      <div class="feature-card todo">
+        <div class="feature-badge badge-todo">✗ TODO</div>
+        <div class="feature-name">Case Research + Know Your Rights</div>
         <div class="feature-desc">Search Indian case law, summarize precedents, applicable statutes.</div>
         <ul class="feature-items">
-          <li>Indian Supreme Court cases</li>
-          <li>High Court judgments</li>
-          <li>Structured summaries</li>
+          <li>IndianKanoon API integration</li>
+          <li>AI case summarization</li>
+          <li>Rights by category (static + AI)</li>
           <li>Save to research library</li>
         </ul>
       </div>
+
+      <div class="feature-card todo">
+        <div class="feature-badge badge-todo">✗ TODO</div>
+        <div class="feature-name">Lawyer Marketplace</div>
+        <div class="feature-desc">Connect users with lawyers for contract review. Second monetization stream.</div>
+        <ul class="feature-items">
+          <li>Lawyer profile model + pages</li>
+          <li>Contract review request flow</li>
+          <li>Razorpay — consultation payment</li>
+          <li>Lawyer dashboard</li>
+        </ul>
+      </div>
+
     </div>
   </div>
 
-  <!-- SECTION 2: INDIAN LAW -->
+  <!-- SECTION 2: ROADMAP -->
   <div class="section">
     <div class="section-header">
       <span class="section-num">02</span>
-      <h2 class="section-title">Indian Legal Framework</h2>
-    </div>
-    <div style="background:var(--dark2);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
-      <table class="law-table">
-        <thead>
-          <tr>
-            <th>ACT / LAW</th>
-            <th>YEAR</th>
-            <th>APPLIED IN</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Indian Contract Act</td><td>1872</td><td>All contracts — offer, acceptance, consideration</td></tr>
-          <tr><td>Information Technology Act</td><td>2000</td><td>Digital contracts, e-signatures, SaaS agreements</td></tr>
-          <tr><td>Specific Relief Act</td><td>1963</td><td>Contract enforcement & remedies</td></tr>
-          <tr><td>Indian Stamp Act</td><td>1899</td><td>Stamp duty notices on all contracts</td></tr>
-          <tr><td>Industrial Disputes Act</td><td>1947</td><td>Employment contracts, termination clauses</td></tr>
-          <tr><td>Copyright Act</td><td>1957</td><td>IP clauses in NDA & SaaS agreements</td></tr>
-          <tr><td>Arbitration & Conciliation Act</td><td>1996</td><td>Dispute resolution clause in all contracts</td></tr>
-          <tr><td>DPDP Act (Data Protection)</td><td>2023</td><td>Privacy clauses in SaaS & NDA agreements</td></tr>
-          <tr><td>Income Tax Act (TDS 194J)</td><td>1961</td><td>Freelance / Service agreements</td></tr>
-          <tr><td>Shops & Establishments Act</td><td>State-wise</td><td>Employment contracts by state</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- SECTION 3: FILE STRUCTURE -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-num">03</span>
-      <h2 class="section-title">Final Project Structure</h2>
-    </div>
-    <div class="file-tree">
-      <div class="tree-dir">NyayaAI/</div>
-      <div class="tree-indent">
-        <div class="tree-dir">server/</div>
-        <div class="tree-indent">
-          <div class="tree-file done">app.js <span class="tree-label lbl-done">fixed</span></div>
-          <div class="tree-file done">server.js <span class="tree-label lbl-done">fixed</span></div>
-          <div class="tree-file done">.env</div>
-          <div class="tree-dir">config/</div>
-          <div class="tree-indent">
-            <div class="tree-file done">db.js <span class="tree-label lbl-done">done</span></div>
-          </div>
-          <div class="tree-dir">models/</div>
-          <div class="tree-indent">
-            <div class="tree-file done">User.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file new">ChatSession.js <span class="tree-label lbl-new">to build</span></div>
-            <div class="tree-file new">Contract.js <span class="tree-label lbl-new">to build</span></div>
-            <div class="tree-file new">Document.js <span class="tree-label lbl-new">to build</span></div>
-          </div>
-          <div class="tree-dir">controllers/</div>
-          <div class="tree-indent">
-            <div class="tree-file done">userController.js <span class="tree-label lbl-done">fixed</span></div>
-            <div class="tree-file done">queryController.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file new">contractController.js <span class="tree-label lbl-new">to build</span></div>
-            <div class="tree-file new">documentController.js <span class="tree-label lbl-new">to build</span></div>
-          </div>
-          <div class="tree-dir">routes/</div>
-          <div class="tree-indent">
-            <div class="tree-file done">userRoutes.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">queryRoutes.js <span class="tree-label lbl-done">fixed</span></div>
-            <div class="tree-file new">contractRoutes.js <span class="tree-label lbl-new">to build</span></div>
-            <div class="tree-file new">documentRoutes.js <span class="tree-label lbl-new">to build</span></div>
-          </div>
-          <div class="tree-dir">middleware/</div>
-          <div class="tree-indent">
-            <div class="tree-file done">authMiddleware.js <span class="tree-label lbl-done">fixed</span></div>
-            <div class="tree-file new">uploadMiddleware.js <span class="tree-label lbl-new">to build</span></div>
-          </div>
-          <div class="tree-dir">services/</div>
-          <div class="tree-indent">
-            <div class="tree-file new">contractAI.service.js <span class="tree-label lbl-new">to build</span></div>
-            <div class="tree-file new">documentAI.service.js <span class="tree-label lbl-new">to build</span></div>
-          </div>
-        </div>
-        <div class="tree-dir">client/src/</div>
-        <div class="tree-indent">
-          <div class="tree-file done">App.jsx <span class="tree-label lbl-done">done</span></div>
-          <div class="tree-dir">pages/</div>
-          <div class="tree-indent">
-            <div class="tree-file new">Login.jsx <span class="tree-label lbl-new">needs UI</span></div>
-            <div class="tree-file new">Register.jsx <span class="tree-label lbl-new">needs UI</span></div>
-            <div class="tree-file done">Dashboard.jsx <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file new">ContractGenerator.jsx <span class="tree-label lbl-new">to build</span></div>
-            <div class="tree-file new">DocumentAnalyzer.jsx <span class="tree-label lbl-new">to build</span></div>
-            <div class="tree-file new">CaseResearch.jsx <span class="tree-label lbl-new">to build</span></div>
-          </div>
-          <div class="tree-dir">components/</div>
-          <div class="tree-indent">
-            <div class="tree-file done">ChatBubble.jsx <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">Loader.jsx <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file new">Navbar.jsx <span class="tree-label lbl-new">to build</span></div>
-            <div class="tree-file new">ContractForm.jsx <span class="tree-label lbl-new">to build</span></div>
-            <div class="tree-file new">ContractPreview.jsx <span class="tree-label lbl-new">to build</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SECTION 4: ROADMAP -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-num">04</span>
-      <h2 class="section-title">Build Roadmap</h2>
+      <h2 class="section-title">Week-by-Week Roadmap</h2>
     </div>
     <div class="roadmap">
+
       <div class="roadmap-item">
         <div class="roadmap-dot done-dot">✓</div>
         <div class="roadmap-content">
@@ -614,10 +376,11 @@
             <span class="task-chip done-chip">JWT Auth</span>
             <span class="task-chip done-chip">Register / Login</span>
             <span class="task-chip done-chip">Protected Routes</span>
-            <span class="task-chip done-chip">Bug Fixes</span>
+            <span class="task-chip done-chip">authMiddleware</span>
           </div>
         </div>
       </div>
+
       <div class="roadmap-item">
         <div class="roadmap-dot done-dot">✓</div>
         <div class="roadmap-content">
@@ -631,63 +394,273 @@
           </div>
         </div>
       </div>
+
       <div class="roadmap-item">
-        <div class="roadmap-dot active-dot">3</div>
+        <div class="roadmap-dot done-dot">✓</div>
         <div class="roadmap-content">
-          <div class="roadmap-week">WEEK 3 — CURRENT</div>
+          <div class="roadmap-week">WEEK 3 — COMPLETE</div>
           <div class="roadmap-title">Contract Generator</div>
           <div class="roadmap-tasks">
-            <span class="task-chip active-chip">Contract.js Model</span>
-            <span class="task-chip active-chip">AI Service (Indian Law)</span>
-            <span class="task-chip active-chip">Backend Routes</span>
-            <span class="task-chip active-chip">Form UI</span>
-            <span class="task-chip active-chip">PDF Export</span>
-            <span class="task-chip active-chip">DOCX Export</span>
+            <span class="task-chip done-chip">Contract.js Model</span>
+            <span class="task-chip done-chip">contractAI.service.js</span>
+            <span class="task-chip done-chip">ContractForm.jsx</span>
+            <span class="task-chip done-chip">ContractPreview.jsx</span>
+            <span class="task-chip done-chip">PDF + DOCX Export</span>
+            <span class="task-chip done-chip">History + Delete</span>
           </div>
         </div>
       </div>
+
       <div class="roadmap-item">
-        <div class="roadmap-dot">4</div>
+        <div class="roadmap-dot done-dot">✓</div>
         <div class="roadmap-content">
-          <div class="roadmap-week">WEEK 4</div>
-          <div class="roadmap-title">Chat History + Login UI</div>
+          <div class="roadmap-week">WEEK 4 — COMPLETE</div>
+          <div class="roadmap-title">Payments & Usage Gating</div>
           <div class="roadmap-tasks">
-            <span class="task-chip">ChatSession Model</span>
-            <span class="task-chip">Save Messages API</span>
-            <span class="task-chip">Session Sidebar</span>
-            <span class="task-chip">Login/Register UI</span>
-            <span class="task-chip">Navbar</span>
+            <span class="task-chip done-chip">Razorpay Integration</span>
+            <span class="task-chip done-chip">isPremium Flip</span>
+            <span class="task-chip done-chip">Free Limit Enforcement</span>
+            <span class="task-chip done-chip">PlanUsageBar</span>
+            <span class="task-chip done-chip">PremiumModal</span>
+            <span class="task-chip done-chip">Monthly Usage Reset</span>
           </div>
         </div>
       </div>
+
       <div class="roadmap-item">
-        <div class="roadmap-dot">5</div>
+        <div class="roadmap-dot active-dot">5</div>
         <div class="roadmap-content">
-          <div class="roadmap-week">WEEK 5</div>
-          <div class="roadmap-title">Document Analyzer</div>
+          <div class="roadmap-week">WEEK 5 — CURRENT</div>
+          <div class="roadmap-title">UI Polish + Security</div>
           <div class="roadmap-tasks">
-            <span class="task-chip">Multer Upload</span>
-            <span class="task-chip">PDF Parser</span>
-            <span class="task-chip">AI Analysis</span>
-            <span class="task-chip">Risk Score</span>
-            <span class="task-chip">Report Export</span>
+            <span class="task-chip active-chip">PlaceholderHighlighter</span>
+            <span class="task-chip active-chip">Copy to Clipboard</span>
+            <span class="task-chip active-chip">PDF Download</span>
+            <span class="task-chip active-chip">React Error Boundary</span>
+            <span class="task-chip active-chip">helmet + rate-limit</span>
+            <span class="task-chip active-chip">express-validator</span>
+            <span class="task-chip active-chip">T&C Modal</span>
           </div>
         </div>
       </div>
+
       <div class="roadmap-item">
         <div class="roadmap-dot">6</div>
         <div class="roadmap-content">
           <div class="roadmap-week">WEEK 6</div>
-          <div class="roadmap-title">Case Research + Deploy</div>
+          <div class="roadmap-title">Chat History + Navbar</div>
           <div class="roadmap-tasks">
-            <span class="task-chip">Case Search UI</span>
-            <span class="task-chip">AI Summarization</span>
-            <span class="task-chip">Vercel Deploy</span>
-            <span class="task-chip">Render Deploy</span>
-            <span class="task-chip">MongoDB Atlas</span>
+            <span class="task-chip">ChatSession.js</span>
+            <span class="task-chip">Save Messages API</span>
+            <span class="task-chip">Session Sidebar</span>
+            <span class="task-chip">Navbar Redesign</span>
+            <span class="task-chip">Dashboard Redesign</span>
+            <span class="task-chip">JWT Refresh Tokens</span>
           </div>
         </div>
       </div>
+
+      <div class="roadmap-item">
+        <div class="roadmap-dot">7</div>
+        <div class="roadmap-content">
+          <div class="roadmap-week">WEEK 7</div>
+          <div class="roadmap-title">Document Analyzer</div>
+          <div class="roadmap-tasks">
+            <span class="task-chip">Document.js Model</span>
+            <span class="task-chip">Multer Upload</span>
+            <span class="task-chip">PDF Parser</span>
+            <span class="task-chip">AI Analysis + Risk Score</span>
+            <span class="task-chip">DocumentAnalyzer.jsx</span>
+            <span class="task-chip">Report Export</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="roadmap-dot">8</div>
+        <div class="roadmap-content">
+          <div class="roadmap-week">WEEK 8</div>
+          <div class="roadmap-title">India-Specific Moat</div>
+          <div class="roadmap-tasks">
+            <span class="task-chip">Multi-language Contracts</span>
+            <span class="task-chip">IPC / BNS Citations</span>
+            <span class="task-chip">Contract Risk Score</span>
+            <span class="task-chip">WhatsApp Delivery</span>
+            <span class="task-chip">IndianKanoon API</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="roadmap-dot">9</div>
+        <div class="roadmap-content">
+          <div class="roadmap-week">WEEK 9</div>
+          <div class="roadmap-title">Case Research + Know Your Rights</div>
+          <div class="roadmap-tasks">
+            <span class="task-chip">CaseResearch.jsx</span>
+            <span class="task-chip">AI Case Summarization</span>
+            <span class="task-chip">KnowYourRights.jsx</span>
+            <span class="task-chip">Static Rights by Category</span>
+            <span class="task-chip">AI Rights Q&A</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="roadmap-dot">10</div>
+        <div class="roadmap-content">
+          <div class="roadmap-week">WEEK 10</div>
+          <div class="roadmap-title">User Account + E-sign</div>
+          <div class="roadmap-tasks">
+            <span class="task-chip">User Profile Page</span>
+            <span class="task-chip">Plan Status + History</span>
+            <span class="task-chip">Aadhaar E-sign</span>
+            <span class="task-chip">Signature Pad Fallback</span>
+            <span class="task-chip">Signed Contract Storage</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="roadmap-dot">11</div>
+        <div class="roadmap-content">
+          <div class="roadmap-week">WEEK 11</div>
+          <div class="roadmap-title">Lawyer Marketplace</div>
+          <div class="roadmap-tasks">
+            <span class="task-chip">Lawyer.js Model</span>
+            <span class="task-chip">Lawyer Profiles</span>
+            <span class="task-chip">Review Request Flow</span>
+            <span class="task-chip">Consultation Payment</span>
+            <span class="task-chip">Lawyer Dashboard</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="roadmap-dot">12</div>
+        <div class="roadmap-content">
+          <div class="roadmap-week">WEEK 12</div>
+          <div class="roadmap-title">Deploy + Hardening</div>
+          <div class="roadmap-tasks">
+            <span class="task-chip">.env.example</span>
+            <span class="task-chip">README.md</span>
+            <span class="task-chip">CONTRACT_TYPES Config</span>
+            <span class="task-chip">MongoDB Atlas Prod</span>
+            <span class="task-chip">Railway/Render Deploy</span>
+            <span class="task-chip">Vercel Deploy</span>
+            <span class="task-chip">E2E Prod Test</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 3: FILE STRUCTURE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Current Project Structure</h2>
+    </div>
+    <div class="file-tree">
+      <div class="tree-dir">NyayaAI/</div>
+      <div class="tree-indent">
+        <div class="tree-dir">server/</div>
+        <div class="tree-indent">
+          <div class="tree-file done">app.js <span class="tree-label lbl-done">done</span></div>
+          <div class="tree-file done">server.js <span class="tree-label lbl-done">done</span></div>
+          <div class="tree-dir">config/</div>
+          <div class="tree-indent">
+            <div class="tree-file done">db.js <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">razorpay.js <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">logger.js <span class="tree-label lbl-done">done</span></div>
+          </div>
+          <div class="tree-dir">models/</div>
+          <div class="tree-indent">
+            <div class="tree-file done">User.js <span class="tree-label lbl-done">done — isPremium, contractsUsed, usageResetDate</span></div>
+            <div class="tree-file done">Contract.js <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file new">ChatSession.js <span class="tree-label lbl-new">to build</span></div>
+            <div class="tree-file new">Document.js <span class="tree-label lbl-new">to build</span></div>
+            <div class="tree-file new">Lawyer.js <span class="tree-label lbl-new">to build</span></div>
+          </div>
+          <div class="tree-dir">controllers/</div>
+          <div class="tree-indent">
+            <div class="tree-file done">userController.js <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">queryController.js <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">contractController.js <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">paymentController.js <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file new">documentController.js <span class="tree-label lbl-new">to build</span></div>
+          </div>
+          <div class="tree-dir">routes/</div>
+          <div class="tree-indent">
+            <div class="tree-file done">userRoutes.js <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">queryRoutes.js <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">contractRoutes.js <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">paymentRoutes.js <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file new">documentRoutes.js <span class="tree-label lbl-new">to build</span></div>
+          </div>
+          <div class="tree-dir">middleware/</div>
+          <div class="tree-indent">
+            <div class="tree-file done">authMiddleware.js <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file new">uploadMiddleware.js <span class="tree-label lbl-new">to build</span></div>
+          </div>
+          <div class="tree-dir">services/</div>
+          <div class="tree-indent">
+            <div class="tree-file done">contractAI.service.js <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file new">documentAI.service.js <span class="tree-label lbl-new">to build</span></div>
+          </div>
+        </div>
+        <div class="tree-dir">client/src/</div>
+        <div class="tree-indent">
+          <div class="tree-file done">App.jsx <span class="tree-label lbl-done">done</span></div>
+          <div class="tree-dir">pages/</div>
+          <div class="tree-indent">
+            <div class="tree-file done">Login.jsx <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">Register.jsx <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">Dashboard.jsx <span class="tree-label lbl-done">done — needs redesign</span></div>
+            <div class="tree-file done">ContractGenerator.jsx <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file new">DocumentAnalyzer.jsx <span class="tree-label lbl-new">to build</span></div>
+            <div class="tree-file new">CaseResearch.jsx <span class="tree-label lbl-new">to build</span></div>
+            <div class="tree-file new">KnowYourRights.jsx <span class="tree-label lbl-new">to build</span></div>
+          </div>
+          <div class="tree-dir">components/</div>
+          <div class="tree-indent">
+            <div class="tree-file done">ChatBubble.jsx <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">Loader.jsx <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">ContractForm.jsx <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">ContractPreview.jsx <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">PremiumModal.jsx <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file new">Navbar.jsx <span class="tree-label lbl-new">to build</span></div>
+            <div class="tree-file new">ErrorBoundary.jsx <span class="tree-label lbl-new">to build</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: INDIAN LAW -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Indian Legal Framework</h2>
+    </div>
+    <div style="background:var(--dark2);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+      <table class="law-table">
+        <thead><tr><th>ACT / LAW</th><th>YEAR</th><th>APPLIED IN</th></tr></thead>
+        <tbody>
+          <tr><td>Indian Contract Act</td><td>1872</td><td>All contracts — offer, acceptance, consideration</td></tr>
+          <tr><td>Information Technology Act</td><td>2000</td><td>Digital contracts, e-signatures, SaaS agreements</td></tr>
+          <tr><td>Specific Relief Act</td><td>1963</td><td>Contract enforcement & remedies</td></tr>
+          <tr><td>Indian Stamp Act</td><td>1899</td><td>Stamp duty notices on all contracts</td></tr>
+          <tr><td>Industrial Disputes Act</td><td>1947</td><td>Employment contracts, termination clauses</td></tr>
+          <tr><td>Copyright Act</td><td>1957</td><td>IP clauses in NDA & SaaS agreements</td></tr>
+          <tr><td>Arbitration & Conciliation Act</td><td>1996</td><td>Dispute resolution clause in all contracts</td></tr>
+          <tr><td>DPDP Act (Data Protection)</td><td>2023</td><td>Privacy clauses in SaaS & NDA agreements</td></tr>
+          <tr><td>Income Tax Act (TDS 194J)</td><td>1961</td><td>Freelance / Service agreements</td></tr>
+          <tr><td>Shops & Establishments Act</td><td>State-wise</td><td>Employment contracts by state</td></tr>
+          <tr><td>Bharatiya Nyaya Sanhita (BNS)</td><td>2023</td><td>Replaces IPC — criminal law citations</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -703,12 +676,11 @@
         <div class="stack-items">
           <span class="stack-tag">React 19</span>
           <span class="stack-tag">Vite</span>
-          <span class="stack-tag">TailwindCSS</span>
           <span class="stack-tag">React Router v7</span>
           <span class="stack-tag">Axios</span>
           <span class="stack-tag">react-markdown</span>
-          <span class="stack-tag">jsPDF</span>
-          <span class="stack-tag">docx</span>
+          <span class="stack-tag">html2pdf.js</span>
+          <span class="stack-tag">Razorpay Checkout</span>
         </div>
       </div>
       <div class="stack-card">
@@ -720,8 +692,10 @@
           <span class="stack-tag">Mongoose</span>
           <span class="stack-tag">JWT</span>
           <span class="stack-tag">bcryptjs</span>
+          <span class="stack-tag">Razorpay SDK</span>
           <span class="stack-tag">Multer</span>
-          <span class="stack-tag">pdf-parse</span>
+          <span class="stack-tag">helmet</span>
+          <span class="stack-tag">express-rate-limit</span>
         </div>
       </div>
       <div class="stack-card">
@@ -730,93 +704,43 @@
           <span class="stack-tag">Groq SDK</span>
           <span class="stack-tag">Llama 3.3 70B</span>
           <span class="stack-tag">Vercel</span>
-          <span class="stack-tag">Render</span>
+          <span class="stack-tag">Railway / Render</span>
           <span class="stack-tag">MongoDB Atlas</span>
-          <span class="stack-tag">Cloudinary</span>
+          <span class="stack-tag">Twilio (planned)</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SECTION 6: DEPENDENCIES -->
+  <!-- MILESTONES -->
   <div class="section">
     <div class="section-header">
       <span class="section-num">06</span>
-      <h2 class="section-title">Dependencies to Install</h2>
+      <h2 class="section-title">Milestones</h2>
     </div>
-    <div class="deps-grid">
-      <div class="deps-card">
-        <div class="deps-title">FRONTEND — npm install</div>
-        <div class="dep-row"><span class="dep-name">jspdf</span><span class="dep-purpose">PDF export</span></div>
-        <div class="dep-row"><span class="dep-name">docx</span><span class="dep-purpose">DOCX export</span></div>
-        <div class="dep-row"><span class="dep-name">file-saver</span><span class="dep-purpose">Download files</span></div>
-        <div class="dep-row"><span class="dep-name">zustand</span><span class="dep-purpose">Global state</span></div>
-        <div class="dep-row"><span class="dep-name">framer-motion</span><span class="dep-purpose">Animations</span></div>
-      </div>
-      <div class="deps-card">
-        <div class="deps-title">BACKEND — npm install</div>
-        <div class="dep-row"><span class="dep-name">multer</span><span class="dep-purpose">File uploads</span></div>
-        <div class="dep-row"><span class="dep-name">pdf-parse</span><span class="dep-purpose">PDF text extraction</span></div>
-        <div class="dep-row"><span class="dep-name">mammoth</span><span class="dep-purpose">DOCX text extraction</span></div>
-        <div class="dep-row"><span class="dep-name">helmet</span><span class="dep-purpose">Security headers</span></div>
-        <div class="dep-row"><span class="dep-name">express-rate-limit</span><span class="dep-purpose">API rate limiting</span></div>
-      </div>
+    <div style="background:var(--dark2);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+      <table class="law-table">
+        <thead><tr><th>MILESTONE</th><th>TARGET</th><th>STATUS</th></tr></thead>
+        <tbody>
+          <tr><td>Deployable MVP</td><td>End of Week 12</td><td style="color:var(--gold)">In Progress</td></tr>
+          <tr><td>India-specific moat</td><td>Week 8</td><td style="color:var(--red)">Not Started</td></tr>
+          <tr><td>Real monetization live</td><td>Week 11</td><td style="color:var(--red)">Not Started</td></tr>
+          <tr><td>Fundable product</td><td>After Week 11</td><td style="color:var(--red)">Not Started</td></tr>
+          <tr><td>Security hardened</td><td>Week 5</td><td style="color:var(--gold)">In Progress</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
 </div>
 
-<!-- FOOTER -->
 <div class="footer">
   <div class="footer-brand">⚖️ NyayaAI</div>
-  <div class="footer-note">Built for Indian businesses & startups · MERN + Groq AI · Indian Constitution compliant</div>
+  <div class="footer-note">Built for Indian businesses & startups · MERN + Groq AI · Updated April 2026</div>
 </div>
 
 </body>
 </html>
 
 
-NyayaAI/
-├── server/
-│   ├── config/
-│   │   └── db.js ✅
-│   ├── models/
-│   │   ├── User.js ✅
-│   │   ├── Contract.js ✅
-│   │   ├── ChatSession.js ❌
-│   │   └── Document.js ❌
-│   ├── controllers/
-│   │   ├── userController.js ✅
-│   │   ├── queryController.js ✅
-│   │   ├── contractController.js ❌
-│   │   └── documentController.js ❌
-│   ├── routes/
-│   │   ├── userRoutes.js ✅
-│   │   ├── queryRoutes.js ✅
-│   │   ├── contractRoutes.js ✅
-│   │   └── documentRoutes.js ❌
-│   ├── middleware/
-│   │   ├── authMiddleware.js ✅
-│   │   └── uploadMiddleware.js ❌
-│   ├── services/
-│   │   ├── contractAI.service.js ❌
-│   │   └── documentAI.service.js ❌
-│   ├── app.js ✅
-│   └── server.js ✅
-│
-├── client/src/
-│   ├── pages/
-│   │   ├── Login.jsx ❌ needs UI
-│   │   ├── Register.jsx ❌ needs UI
-│   │   ├── Dashboard.jsx ❌ needs redesign
-│   │   ├── ContractGenerator.jsx ✅
-│   │   ├── DocumentAnalyzer.jsx ❌
-│   │   ├── CaseResearch.jsx ❌
-│   │   └── KnowYourRights.jsx ❌
-│   ├── components/
-│   │   ├── ChatBubble.jsx ✅
-│   │   ├── Loader.jsx ✅
-│   │   ├── Navbar.jsx ❌
-│   │   ├── ContractForm.jsx ❌
-│   │   └── ContractPreview.jsx ❌
-│   └── App.jsx ✅
+
