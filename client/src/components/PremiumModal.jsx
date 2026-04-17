@@ -1,15 +1,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // PremiumModal.jsx
-// Extracted from ContractGenerator.jsx — Day 4 Razorpay integration
 // ─────────────────────────────────────────────────────────────────────────────
 
 import React, { useState } from "react";
-import axios from "axios";
+import API from "../services/api";
 import { styles } from "./ContractForm";
-
-const authHeaders = () => ({
-  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-});
 
 export default function PremiumModal({ isOpen, onClose, onUpgradeSuccess }) {
   const [loading, setLoading] = useState(false);
@@ -21,7 +16,6 @@ export default function PremiumModal({ isOpen, onClose, onUpgradeSuccess }) {
   const resetDate = new Date(now.getFullYear(), now.getMonth() + 1, 1)
     .toLocaleDateString("en-IN", { day: "numeric", month: "long" });
 
-  // ── Load Razorpay script dynamically ───────────────────────────────────────
   const loadRazorpayScript = () =>
     new Promise((resolve) => {
       if (document.getElementById("razorpay-script")) return resolve(true);
@@ -33,12 +27,10 @@ export default function PremiumModal({ isOpen, onClose, onUpgradeSuccess }) {
       document.body.appendChild(script);
     });
 
-  // ── Main payment handler ───────────────────────────────────────────────────
   const handleUpgrade = async () => {
     setError("");
     setLoading(true);
 
-    // 1. Load Razorpay checkout script
     const scriptLoaded = await loadRazorpayScript();
     if (!scriptLoaded) {
       setError("Failed to load payment gateway. Check your internet connection.");
@@ -46,10 +38,9 @@ export default function PremiumModal({ isOpen, onClose, onUpgradeSuccess }) {
       return;
     }
 
-    // 2. Create order on backend
     let orderData;
     try {
-      const { data } = await axios.post("/api/payment/create-order", {}, authHeaders());
+      const { data } = await API.post("/api/payment/create-order", {});
       orderData = data;
     } catch (err) {
       setError(err.response?.data?.message || "Could not initiate payment. Try again.");
@@ -57,28 +48,24 @@ export default function PremiumModal({ isOpen, onClose, onUpgradeSuccess }) {
       return;
     }
 
-    // 3. Open Razorpay checkout
     const options = {
-      key:      import.meta.env.VITE_RAZORPAY_KEY_ID,  // from .env
-      amount:   orderData.amount,
-      currency: orderData.currency,
-      name:     "NyayaAI",
+      key:         import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount:      orderData.amount,
+      currency:    orderData.currency,
+      name:        "NyayaAI",
       description: "Pro Plan — Unlimited Contract Generations",
-      order_id: orderData.orderId,
+      order_id:    orderData.orderId,
 
       handler: async (response) => {
-        // 4. Verify payment on backend
         try {
-          await axios.post("/api/payment/verify", {
+          await API.post("/api/payment/verify", {
             razorpay_order_id:   response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature:  response.razorpay_signature,
-          }, authHeaders());
-
-          // 5. Success — tell parent to update usage state
+          });
           onUpgradeSuccess();
           onClose();
-        } catch (err) {
+        } catch {
           setError("Payment verification failed. Contact support.");
         }
         setLoading(false);
@@ -89,7 +76,6 @@ export default function PremiumModal({ isOpen, onClose, onUpgradeSuccess }) {
       },
 
       prefill: {
-        // Razorpay prefill — optional but improves UX
         name:  localStorage.getItem("userName")  || "",
         email: localStorage.getItem("userEmail") || "",
       },
@@ -136,7 +122,6 @@ export default function PremiumModal({ isOpen, onClose, onUpgradeSuccess }) {
           <strong style={{ color: "#e8e0d0" }}>{resetDate}</strong>.
         </p>
 
-        {/* Plan cards */}
         <div style={{ display: "flex", gap: "12px", marginBottom: "24px" }}>
           {/* Free */}
           <div style={{ flex: 1, border: "1px solid rgba(255,255,255,0.1)", borderRadius: "10px", padding: "14px" }}>
@@ -163,14 +148,12 @@ export default function PremiumModal({ isOpen, onClose, onUpgradeSuccess }) {
           </div>
         </div>
 
-        {/* Error */}
         {error && (
           <div style={{ fontSize: "13px", color: "#E24B4A", marginBottom: "12px", padding: "10px", background: "rgba(226,75,74,0.1)", borderRadius: "8px" }}>
             ⚠ {error}
           </div>
         )}
 
-        {/* Actions */}
         <button
           onClick={handleUpgrade}
           disabled={loading}

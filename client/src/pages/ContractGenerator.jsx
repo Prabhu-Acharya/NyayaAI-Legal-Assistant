@@ -3,16 +3,12 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../services/api";
 import PremiumModal from "../components/PremiumModal";
 import { CONTRACT_TYPES, ContractTypeSelector, ContractFieldForm, styles } from "../components/ContractForm";
 import { ContractPreview, HistoryList } from "../components/ContractPreview";
 
 const FREE_LIMIT = 3;
-
-const authHeaders = () => ({
-  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-});
 
 const layoutStyles = {
   wrapper: {
@@ -56,6 +52,7 @@ function PlanUsageBar({ used, limit, isPremium, resetDate, onUpgrade }) {
     ? new Date(resetDate).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })
     : new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)
       .toLocaleDateString("en-IN", { day: "numeric", month: "long" });
+
   return (
     <div style={{
       background: "rgba(255,255,255,0.04)",
@@ -65,7 +62,6 @@ function PlanUsageBar({ used, limit, isPremium, resetDate, onUpgrade }) {
       marginBottom: "20px",
       fontFamily: "sans-serif",
     }}>
-      {/* Top row */}
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
         <span style={{ fontSize: "13px", fontWeight: "500", color: "#d4c5a9" }}>
           Contract generations
@@ -75,7 +71,6 @@ function PlanUsageBar({ used, limit, isPremium, resetDate, onUpgrade }) {
         </span>
       </div>
 
-      {/* Progress bar */}
       <div style={{ height: "6px", background: "rgba(255,255,255,0.08)", borderRadius: "99px", overflow: "hidden", marginBottom: "8px" }}>
         <div style={{
           height: "100%",
@@ -86,7 +81,6 @@ function PlanUsageBar({ used, limit, isPremium, resetDate, onUpgrade }) {
         }} />
       </div>
 
-      {/* Hint */}
       <div style={{ fontSize: "12px", color: "#666" }}>
         {atLimit ? (
           <>Limit reached · Resets {formattedResetDate} · <button onClick={onUpgrade} style={{ background: "none", border: "none", color: "#c9a84c", fontSize: "12px", cursor: "pointer", textDecoration: "underline", padding: 0 }}>Upgrade for unlimited</button></>
@@ -97,8 +91,6 @@ function PlanUsageBar({ used, limit, isPremium, resetDate, onUpgrade }) {
     </div>
   );
 }
-
-
 
 // ── ContractGenerator ─────────────────────────────────────────────────────────
 export default function ContractGenerator() {
@@ -112,16 +104,13 @@ export default function ContractGenerator() {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
-  // ── Day 2: usage state ─────────────────────────────────────────────────────
   const [usage, setUsage] = useState({ used: 0, limit: FREE_LIMIT, isPremium: false, resetDate: null });
   const [showModal, setShowModal] = useState(false);
 
-  // ── Fetch usage on mount ───────────────────────────────────────────────────
   useEffect(() => {
     const fetchUsage = async () => {
       try {
-        const { data } = await axios.get("/api/users/usage", authHeaders());
+        const { data } = await API.get("/api/users/usage");
         setUsage(data);
       } catch {
         // silently fail — bar just shows 0
@@ -137,7 +126,7 @@ export default function ContractGenerator() {
   const loadHistory = async () => {
     setHistoryLoading(true);
     try {
-      const { data } = await axios.get("/api/contracts", authHeaders());
+      const { data } = await API.get("/api/contracts");
       setHistory(data);
     } catch {
       setHistory([]);
@@ -145,9 +134,7 @@ export default function ContractGenerator() {
     setHistoryLoading(false);
   };
 
-  // ── Generation ─────────────────────────────────────────────────────────────
   const handleGenerate = async () => {
-    // Block at client side before hitting the API
     if (!usage.isPremium && usage.used >= usage.limit) {
       setShowModal(true);
       return;
@@ -165,20 +152,17 @@ export default function ContractGenerator() {
     setError("");
     setLoading(true);
     try {
-      const { data } = await axios.post(
-        "/api/contracts/generate",
-        { type: selectedType, formData },
-        authHeaders()
-      );
+      const { data } = await API.post("/api/contracts/generate", {
+        type: selectedType,
+        formData,
+      });
 
-      // upgradeRequired — open modal instead of plain error text
       if (data.upgradeRequired) {
         setShowModal(true);
         setLoading(false);
         return;
       }
 
-      // Update usage bar without a refetch
       if (data.usage) {
         setUsage(prev => ({ ...prev, ...data.usage }));
       }
@@ -199,7 +183,7 @@ export default function ContractGenerator() {
 
   const handleViewHistory = async (id) => {
     try {
-      const { data } = await axios.get(`/api/contracts/${id}`, authHeaders());
+      const { data } = await API.get(`/api/contracts/${id}`);
       setContract({ contractId: data._id, title: data.title, content: data.content });
       setSelectedType(data.type);
       setFormData(data.formData);
@@ -213,7 +197,7 @@ export default function ContractGenerator() {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this contract permanently?")) return;
     try {
-      await axios.delete(`/api/contracts/${id}`, authHeaders());
+      await API.delete(`/api/contracts/${id}`);
       setHistory((prev) => prev.filter((c) => c._id !== id));
     } catch {
       setError("Delete failed.");
@@ -246,7 +230,6 @@ export default function ContractGenerator() {
           Generate legally compliant contracts under Indian law — powered by Groq AI
         </p>
 
-        {/* Tabs */}
         <div style={layoutStyles.tabs}>
           <button style={layoutStyles.tab(tab === "generate")} onClick={() => setTab("generate")}>
             ✍ Generate Contract
@@ -256,10 +239,8 @@ export default function ContractGenerator() {
           </button>
         </div>
 
-        {/* GENERATE TAB */}
         {tab === "generate" && (
           <>
-            {/* Usage bar — always visible on generate tab */}
             <PlanUsageBar
               used={usage.used}
               limit={usage.limit}
@@ -267,7 +248,6 @@ export default function ContractGenerator() {
               resetDate={usage.resetDate}
               onUpgrade={() => setShowModal(true)}
             />
-            {/* Step indicators */}
             <div style={layoutStyles.stepRow}>
               {["Select Type", "Fill Details", "Review & Export"].map((label, i) => (
                 <div
@@ -290,7 +270,6 @@ export default function ContractGenerator() {
                 onContinue={() => atLimit ? setShowModal(true) : setStep(2)}
               />
             )}
-
             {step === 2 && (
               <ContractFieldForm
                 selectedType={selectedType}
@@ -302,7 +281,6 @@ export default function ContractGenerator() {
                 atLimit={atLimit}
               />
             )}
-
             {step === 3 && contract && (
               <ContractPreview
                 contract={contract}
@@ -313,7 +291,6 @@ export default function ContractGenerator() {
           </>
         )}
 
-        {/* HISTORY TAB */}
         {tab === "history" && (
           <HistoryList
             history={history}
@@ -325,7 +302,6 @@ export default function ContractGenerator() {
         )}
       </div>
 
-      {/* Upgrade modal */}
       <PremiumModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}

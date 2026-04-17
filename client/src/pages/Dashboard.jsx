@@ -1,20 +1,16 @@
 import { useState, useRef, useEffect } from "react";
-import axios from "axios";
 import ChatBubble from "../components/ChatBubble";
 import Loader from "../components/Loader";
-
-const authHeaders = () => ({
-  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-});
+import API from "../services/api";
 
 const Dashboard = () => {
-  const [question,          setQuestion]          = useState("");
-  const [messages,          setMessages]          = useState([]);
-  const [loading,           setLoading]           = useState(false);
-  const [sessionId,         setSessionId]         = useState(null);
-  const [sessions,          setSessions]          = useState([]);
-  const [sessionsLoading,   setSessionsLoading]   = useState(true);
-  const [sidebarOpen,       setSidebarOpen]       = useState(true);
+  const [question,        setQuestion]        = useState("");
+  const [messages,        setMessages]        = useState([]);
+  const [loading,         setLoading]         = useState(false);
+  const [sessionId,       setSessionId]       = useState(null);
+  const [sessions,        setSessions]        = useState([]);
+  const [sessionsLoading, setSessionsLoading] = useState(true);
+  const [sidebarOpen,     setSidebarOpen]     = useState(true);
 
   const chatEndRef = useRef(null);
 
@@ -22,7 +18,6 @@ const Dashboard = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  // ── Load session list on mount ─────────────────────────────────────────────
   useEffect(() => {
     fetchSessions();
   }, []);
@@ -30,7 +25,7 @@ const Dashboard = () => {
   const fetchSessions = async () => {
     setSessionsLoading(true);
     try {
-      const { data } = await axios.get("/api/chat", authHeaders());
+      const { data } = await API.get("/api/chat");
       setSessions(data);
     } catch {
       setSessions([]);
@@ -38,10 +33,9 @@ const Dashboard = () => {
     setSessionsLoading(false);
   };
 
-  // ── Load a session ─────────────────────────────────────────────────────────
   const loadSession = async (id) => {
     try {
-      const { data } = await axios.get(`/api/chat/${id}`, authHeaders());
+      const { data } = await API.get(`/api/chat/${id}`);
       setSessionId(data._id);
       setMessages(data.messages.map((m) => ({ role: m.role, text: m.text })));
     } catch {
@@ -49,10 +43,9 @@ const Dashboard = () => {
     }
   };
 
-  // ── New chat ───────────────────────────────────────────────────────────────
   const handleNewChat = async () => {
     try {
-      const { data } = await axios.post("/api/chat", {}, authHeaders());
+      const { data } = await API.post("/api/chat", {});
       setSessionId(data._id);
       setMessages([]);
       setSessions((prev) => [data, ...prev]);
@@ -61,11 +54,10 @@ const Dashboard = () => {
     }
   };
 
-  // ── Delete session ─────────────────────────────────────────────────────────
   const handleDeleteSession = async (e, id) => {
     e.stopPropagation();
     try {
-      await axios.delete(`/api/chat/${id}`, authHeaders());
+      await API.delete(`/api/chat/${id}`);
       setSessions((prev) => prev.filter((s) => s._id !== id));
       if (sessionId === id) {
         setSessionId(null);
@@ -76,15 +68,13 @@ const Dashboard = () => {
     }
   };
 
-  // ── Send message ───────────────────────────────────────────────────────────
   const handleAsk = async () => {
     if (!question.trim()) return;
 
-    // Create session automatically if none exists
     let currentSessionId = sessionId;
     if (!currentSessionId) {
       try {
-        const { data } = await axios.post("/api/chat", {}, authHeaders());
+        const { data } = await API.post("/api/chat", {});
         currentSessionId = data._id;
         setSessionId(data._id);
         setSessions((prev) => [data, ...prev]);
@@ -101,40 +91,28 @@ const Dashboard = () => {
 
     // Save user message to DB
     try {
-      await axios.post(
-        `/api/chat/${currentSessionId}/message`,
-        { role: "user", text: question },
-        authHeaders()
-      );
+      await API.post(`/api/chat/${currentSessionId}/message`, {
+        role: "user",
+        text: question,
+      });
     } catch {
       console.error("Failed to save user message.");
     }
 
     // Call AI
     try {
-      const res = await fetch("http://localhost:5000/api/query/ask", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ question }),
-      });
-
-      const data = await res.json();
+      const { data } = await API.post("/api/query/ask", { question });
       const aiText = data.answer || "No response from AI";
       const aiMessage = { role: "ai", text: aiText };
 
       setMessages((prev) => [...prev, aiMessage]);
 
       // Save AI message to DB
-      await axios.post(
-        `/api/chat/${currentSessionId}/message`,
-        { role: "ai", text: aiText },
-        authHeaders()
-      );
+      await API.post(`/api/chat/${currentSessionId}/message`, {
+        role: "ai",
+        text: aiText,
+      });
 
-      // Refresh session list to update title + order
       fetchSessions();
     } catch (error) {
       console.error("API Error:", error);
@@ -160,7 +138,6 @@ const Dashboard = () => {
           flexDirection: "column",
           flexShrink: 0,
         }}>
-          {/* Header */}
           <div style={{
             padding: "12px",
             borderBottom: "1px solid #1f2937",
@@ -190,7 +167,6 @@ const Dashboard = () => {
             </button>
           </div>
 
-          {/* Session list */}
           <div style={{ flex: 1, overflowY: "auto", padding: "8px" }}>
             {sessionsLoading ? (
               <div style={{ color: "#6b7280", fontSize: "12px", padding: "12px", textAlign: "center" }}>
@@ -245,7 +221,6 @@ const Dashboard = () => {
       {/* ── Main chat area ── */}
       <div className="flex-1 flex flex-col bg-gray-100" style={{ minWidth: 0 }}>
 
-        {/* Top bar */}
         <div style={{
           padding: "10px 16px",
           background: "#fff",
@@ -271,7 +246,6 @@ const Dashboard = () => {
           </span>
         </div>
 
-        {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.length === 0 && !loading && (
             <div style={{
@@ -294,7 +268,6 @@ const Dashboard = () => {
           <div ref={chatEndRef} />
         </div>
 
-        {/* Input */}
         <div className="p-3 bg-white flex items-center gap-2 border-t shadow">
           <input
             type="text"

@@ -1,52 +1,33 @@
 import React, { useState } from "react";
+import API from "../services/api";
 
-function Login() {
-  // 🧠 form data store
-  const [formData, setFormData] = useState({
-    email: "",
-    password: ""
-  });
+function Login({ onLoginSuccess }) {
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // 📝 input handle
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // 🔐 login function
   const handleLogin = async () => {
+    setError("");
+    setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
-      });
+      const { data } = await API.post("/api/users/login", formData);
 
-      const data = await res.json();
-
-      console.log(data);
-
-      // ❌ error handle (IMPORTANT)
       if (!data.token) {
-        alert(data.message || "Login failed ❌");
+        setError(data.message || "Login failed ❌");
+        setLoading(false);
         return;
       }
 
-      // 💾 token save
-      localStorage.setItem("token", data.token);
+      onLoginSuccess(data.token);
 
-      alert("Login Successful 🚀");
-
-      // 🔄 reload → dashboard show hoga
-      window.location.reload();
-
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed ❌");
     }
+    setLoading(false);
   };
 
   return (
@@ -68,7 +49,11 @@ function Login() {
       />
       <br /><br />
 
-      <button onClick={handleLogin}>Login</button>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      <button onClick={handleLogin} disabled={loading}>
+        {loading ? "Logging in..." : "Login"}
+      </button>
     </div>
   );
 }
