@@ -1,30 +1,30 @@
 import React, { useState } from "react";
+import API from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: ""
-  });
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
-    const res = await fetch("http://localhost:5000/api/users/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(formData)
-    });
-
-    const data = await res.json();
-    console.log(data);
+    setError("");
+    setLoading(true);
+    try {
+      const { data } = await API.post("/api/users/register", formData);
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+      navigate("/login");
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed ❌");
+    }
+    setLoading(false);
   };
 
   return (
@@ -37,10 +37,14 @@ function Register() {
       <input name="email" placeholder="Email" onChange={handleChange} />
       <br /><br />
 
-      <input name="password" placeholder="Password" onChange={handleChange} />
+      <input name="password" type="password" placeholder="Password" onChange={handleChange} />
       <br /><br />
 
-      <button onClick={handleSubmit}>Register</button>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      <button onClick={handleSubmit} disabled={loading}>
+        {loading ? "Registering..." : "Register"}
+      </button>
     </div>
   );
 }
