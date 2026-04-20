@@ -7,6 +7,7 @@ import TermsModal from "./components/TermsModal";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
+import Profile from "./pages/Profile";
 
 // OUTSIDE App — stable identity, no remount on state change
 function ProtectedDashboard({ token, hasAcceptedTerms, onTermsAccepted, onLogout }) {
@@ -76,6 +77,7 @@ function App() {
           >
             <Route index element={<Dashboard />} />
             <Route path="contracts" element={<ContractGenerator />} />
+            <Route path="profile" element={<Profile onLogout={handleLogout} />} />
           </Route>
           <Route
             path="/"
