@@ -9,19 +9,19 @@ import { useState } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 // OUTSIDE App — stable identity, no remount on state change
-function ProtectedDashboard({ token, hasAcceptedTerms, onTermsAccepted }) {
+function ProtectedDashboard({ token, hasAcceptedTerms, onTermsAccepted, onLogout }) {
   if (!token) return <Navigate to="/login" />;
   return (
     <>
       {!hasAcceptedTerms && (
         <>
           <div style={{ filter: "blur(4px)", pointerEvents: "none", userSelect: "none" }}>
-            <DashboardLayout />
+            <DashboardLayout onLogout={onLogout} />
           </div>
           <TermsModal onAccepted={onTermsAccepted} />
         </>
       )}
-      {hasAcceptedTerms && <DashboardLayout />}
+      {hasAcceptedTerms && <DashboardLayout onLogout={onLogout} />}
     </>
   );
 }
@@ -70,6 +70,7 @@ function App() {
                 token={token}
                 hasAcceptedTerms={hasAcceptedTerms}
                 onTermsAccepted={handleTermsAccepted}
+                onLogout={handleLogout}
               />
             }
           >
