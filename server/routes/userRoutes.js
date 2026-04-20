@@ -6,6 +6,7 @@ const {
   loginUser,
   registerValidation,
   loginValidation,
+  getProfile,                          // ← add
 } = require('../controllers/userController');
 const protect = require('../middleware/authMiddleware');
 const User    = require('../models/User');
@@ -15,15 +16,12 @@ const FREE_CONTRACT_LIMIT = 3;
 router.post('/register', registerValidation, registerUser);
 router.post('/login',    loginValidation,    loginUser);
 
-router.get('/profile', protect, (req, res) => {
-  res.json({ message: "Protected route accessed ✅", userId: req.user });
-});
+router.get('/profile', protect, getProfile); // ← replace placeholder
 
 router.get('/usage', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user).select('isPremium contractsUsed usageResetDate');
     if (!user) return res.status(404).json({ message: 'User not found.' });
-
     res.json({
       isPremium:    user.isPremium,
       used:         user.contractsUsed,
@@ -36,7 +34,6 @@ router.get('/usage', protect, async (req, res) => {
   }
 });
 
-// ── NEW ──────────────────────────────────────────────────────────────────────
 router.post('/accept-terms', protect, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
@@ -44,14 +41,11 @@ router.post('/accept-terms', protect, async (req, res) => {
       { hasAcceptedTerms: true },
       { new: true }
     ).select('-password');
-
     if (!user) return res.status(404).json({ message: 'User not found.' });
-
     res.json({ message: 'Terms accepted.', hasAcceptedTerms: user.hasAcceptedTerms });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
-// ─────────────────────────────────────────────────────────────────────────────
 
 module.exports = router;
