@@ -25,7 +25,7 @@ export default function TermsModal({ onAccepted }) {
     setLoading(true);
     setError("");
     try {
-      await api.post("/users/accept-terms"); // JWT auto-attached by Axios interceptor
+      await api.post("/api/users/accept-terms"); // JWT auto-attached by Axios interceptor
       onAccepted();                          // lift state up → parent removes modal
     } catch (err) {
       setError(
