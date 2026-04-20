@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "",
+  baseURL: (import.meta.env.VITE_API_URL || "") + "/api",
 });
 
 // Attach JWT token to every request
@@ -27,7 +27,7 @@ API.interceptors.response.use(
 
 // ── Existing helpers ──────────────────────────────────────
 export const askQuestion = (question) => {
-  return API.post("/api/ask", { question });
+  return API.post("/ask", { question }); // remove /api prefix
 };
 
 export default API;
