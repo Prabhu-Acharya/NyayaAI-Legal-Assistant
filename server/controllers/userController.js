@@ -72,7 +72,6 @@ const registerUser = async (req, res) => {
 
 // ── LOGIN ─────────────────────────────────────────────────────────────────────
 const loginUser = async (req, res) => {
-  // Check validation errors
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ message: errors.array()[0].msg });
@@ -82,29 +81,23 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "User not found ❌" });
-    }
+    if (!user) return res.status(400).json({ message: "User not found ❌" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials ❌" });
-    }
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials ❌" });
 
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
     res.status(200).json({
-      message: "Login successful ✅",
+      message:          "Login successful ✅",
       token,
+      hasAcceptedTerms: user.hasAcceptedTerms, // ← top-level read by Login.jsx
       user: {
-        _id:       user._id,
-        name:      user.name,
-        email:     user.email,
-        isPremium: user.isPremium,
+        _id:             user._id,
+        name:            user.name,
+        email:           user.email,
+        isPremium:       user.isPremium,
+        hasAcceptedTerms: user.hasAcceptedTerms,
       },
     });
   } catch (error) {

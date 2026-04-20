@@ -15,12 +15,10 @@ const FREE_CONTRACT_LIMIT = 3;
 router.post('/register', registerValidation, registerUser);
 router.post('/login',    loginValidation,    loginUser);
 
-// Protected profile route
 router.get('/profile', protect, (req, res) => {
   res.json({ message: "Protected route accessed ✅", userId: req.user });
 });
 
-// Usage endpoint
 router.get('/usage', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user).select('isPremium contractsUsed usageResetDate');
@@ -37,5 +35,23 @@ router.get('/usage', protect, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// ── NEW ──────────────────────────────────────────────────────────────────────
+router.post('/accept-terms', protect, async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user,
+      { hasAcceptedTerms: true },
+      { new: true }
+    ).select('-password');
+
+    if (!user) return res.status(404).json({ message: 'User not found.' });
+
+    res.json({ message: 'Terms accepted.', hasAcceptedTerms: user.hasAcceptedTerms });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+// ─────────────────────────────────────────────────────────────────────────────
 
 module.exports = router;

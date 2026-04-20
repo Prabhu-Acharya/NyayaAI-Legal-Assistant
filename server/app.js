@@ -13,7 +13,10 @@ const chatRoutes = require('./routes/chatRoutes');
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  credentials: true,
+}));
 app.use(express.json());
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────
@@ -35,7 +38,7 @@ const generateLimiter = rateLimit({
   message: { message: "Generation limit reached. Please try again in an hour." },
 });
 
-app.use("/api/", generalLimiter);
+app.use( generalLimiter);
 app.use("/api/users/login", authLimiter);
 app.use("/api/users/register", authLimiter);
 app.use("/api/contracts/generate", generateLimiter);

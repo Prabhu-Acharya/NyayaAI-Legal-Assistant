@@ -20,6 +20,7 @@
     --red: #E05A5A;
     --blue: #5A9BE0;
     --orange: #E09A5A;
+    --purple: #9B5AE0;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: var(--dark); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.7; }
@@ -30,6 +31,9 @@
   .hero h1 { font-family: 'Playfair Display', serif; font-size: 52px; font-weight: 900; line-height: 1.1; color: #fff; margin-bottom: 12px; }
   .hero h1 span { color: var(--gold); }
   .hero p { font-size: 16px; color: var(--text-muted); max-width: 600px; }
+  .hero-live { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--green); background: rgba(76,175,125,0.1); border: 1px solid rgba(76,175,125,0.3); padding: 6px 14px; border-radius: 4px; }
+  .hero-live::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
   .container { max-width: 1100px; margin: 0 auto; padding: 0 48px 80px; }
 
@@ -111,13 +115,29 @@
   .law-table td:first-child { color: var(--text); font-weight: 500; }
   .law-table tr:hover td { background: var(--dark2); }
 
-  .deps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .deps-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
-  .deps-title { font-size: 13px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-bottom: 12px; }
-  .dep-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid rgba(201,168,76,0.07); }
-  .dep-row:last-child { border-bottom: none; }
-  .dep-name { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text); }
-  .dep-purpose { font-size: 12px; color: var(--text-muted); }
+  /* COMPARISON TABLE */
+  .comp-table { width: 100%; border-collapse: collapse; }
+  .comp-table th { text-align: left; padding: 12px 16px; font-size: 11px; letter-spacing: 0.1em; font-family: 'JetBrains Mono', monospace; background: var(--dark3); border-bottom: 1px solid var(--border); }
+  .comp-table th:nth-child(2) { color: #888; }
+  .comp-table th:nth-child(3) { color: var(--gold); }
+  .comp-table td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid rgba(201,168,76,0.08); vertical-align: top; }
+  .comp-table td:first-child { color: var(--text); font-weight: 500; font-size: 12px; }
+  .comp-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .win { color: var(--green); font-size: 12px; }
+  .lose { color: var(--red); font-size: 12px; }
+  .tie { color: var(--gold); font-size: 12px; }
+  .comp-badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; }
+  .cb-win { background: rgba(76,175,125,0.15); color: var(--green); border: 1px solid rgba(76,175,125,0.3); }
+  .cb-lose { background: rgba(224,90,90,0.1); color: var(--red); border: 1px solid rgba(224,90,90,0.2); }
+  .cb-tie { background: rgba(201,168,76,0.1); color: var(--gold); border: 1px solid var(--border); }
+  .comp-note { font-size: 11px; color: var(--text-muted); margin-top: 3px; line-height: 1.4; }
+
+  .suggest-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .suggest-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; border-left: 3px solid var(--blue); }
+  .suggest-card.urgent { border-left-color: var(--red); }
+  .suggest-card.moat { border-left-color: var(--purple); }
+  .suggest-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+  .suggest-why { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
 
   .footer { margin-top: 60px; padding: 32px 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--dark2); }
   .footer-brand { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gold); }
@@ -130,7 +150,7 @@
     .progress-grid { grid-template-columns: 1fr 1fr; }
     .feature-grid { grid-template-columns: 1fr; }
     .stack-grid { grid-template-columns: 1fr; }
-    .deps-grid { grid-template-columns: 1fr; }
+    .suggest-grid { grid-template-columns: 1fr; }
     .footer { flex-direction: column; gap: 12px; text-align: center; }
   }
 </style>
@@ -138,21 +158,22 @@
 <body>
 
 <div class="hero">
-  <div class="hero-tag">DEVELOPMENT PLAN v2.0 — INDIAN LEGALTECH — UPDATED APR 2026</div>
+  <div class="hero-tag">DEVELOPMENT PLAN v3.0 — INDIAN LEGALTECH — UPDATED APR 18, 2026</div>
   <h1>NyayaAI <span>Platform</span></h1>
   <p>Full-stack AI legal assistant for Indian businesses & startups — built on MERN + Groq AI, compliant with Indian Contract Act & Indian law.</p>
+  <div class="hero-live">LIVE — nyaya-ai-legal-assistant.vercel.app</div>
 </div>
 
 <div class="container">
 
   <!-- PROGRESS -->
   <div class="progress-section">
-    <div class="progress-title">Current Progress — April 13, 2026</div>
+    <div class="progress-title">Current Progress — April 18, 2026</div>
     <div class="progress-grid">
-      <div class="stat-box"><div class="stat-num green">7</div><div class="stat-label">Features Done</div></div>
+      <div class="stat-box"><div class="stat-num green">9</div><div class="stat-label">Features Done</div></div>
       <div class="stat-box"><div class="stat-num gold">1</div><div class="stat-label">In Progress</div></div>
-      <div class="stat-box"><div class="stat-num red">6</div><div class="stat-label">To Build</div></div>
-      <div class="stat-box"><div class="stat-num blue">65%</div><div class="stat-label">MVP Complete</div></div>
+      <div class="stat-box"><div class="stat-num red">5</div><div class="stat-label">To Build</div></div>
+      <div class="stat-box"><div class="stat-num blue">75%</div><div class="stat-label">MVP Complete</div></div>
     </div>
     <div class="phase-progress">
       <div class="phase-row">
@@ -176,17 +197,17 @@
         <div class="bar-pct">100%</div>
       </div>
       <div class="phase-row">
-        <div class="phase-name">Monthly Usage Reset</div>
+        <div class="phase-name">Production Deployment</div>
         <div class="bar-track"><div class="bar-fill done" style="width:100%"></div></div>
         <div class="bar-pct">100%</div>
       </div>
       <div class="phase-row">
-        <div class="phase-name">UI Polish</div>
-        <div class="bar-track"><div class="bar-fill partial" style="width:20%"></div></div>
-        <div class="bar-pct">20%</div>
+        <div class="phase-name">UI Polish + Security</div>
+        <div class="bar-track"><div class="bar-fill partial" style="width:40%"></div></div>
+        <div class="bar-pct">40%</div>
       </div>
       <div class="phase-row">
-        <div class="phase-name">Chat History</div>
+        <div class="phase-name">User Profile</div>
         <div class="bar-track"><div class="bar-fill partial" style="width:0%"></div></div>
         <div class="bar-pct">0%</div>
       </div>
@@ -196,7 +217,7 @@
         <div class="bar-pct">0%</div>
       </div>
       <div class="phase-row">
-        <div class="phase-name">Deploy & Hardening</div>
+        <div class="phase-name">India Moat Features</div>
         <div class="bar-track"><div class="bar-fill partial" style="width:0%"></div></div>
         <div class="bar-pct">0%</div>
       </div>
@@ -216,27 +237,41 @@
         <div class="feature-name">Auth & Onboarding</div>
         <div class="feature-desc">JWT + bcrypt, protected routes, MongoDB user model.</div>
         <ul class="feature-items">
-          <li>Register / Login working</li>
+          <li>Register / Login working + redirect fixed</li>
           <li>JWT secret from .env</li>
           <li>authMiddleware on all protected routes</li>
+          <li>SPA routing via vercel.json</li>
         </ul>
       </div>
 
       <div class="feature-card done">
         <div class="feature-badge badge-done">✓ DONE</div>
-        <div class="feature-name">AI Legal Chat Assistant</div>
-        <div class="feature-desc">Groq Llama 3.3 70B with Indian legal system prompt. Markdown rendering.</div>
+        <div class="feature-name">Production Deployment</div>
+        <div class="feature-desc">Fully live on Vercel + Render + MongoDB Atlas.</div>
         <ul class="feature-items">
-          <li>Hindi / Hinglish / English support</li>
-          <li>Structured legal response format</li>
-          <li>Chat UI with ChatBubble component</li>
+          <li>Frontend: Vercel (nyaya-ai-legal-assistant.vercel.app)</li>
+          <li>Backend: Render (nyayaai-backend-qvih.onrender.com)</li>
+          <li>DB: MongoDB Atlas connected</li>
+          <li>Centralized API via services/api.js</li>
+        </ul>
+      </div>
+
+      <div class="feature-card done">
+        <div class="feature-badge badge-done">✓ DONE</div>
+        <div class="feature-name">AI Legal Chat + History</div>
+        <div class="feature-desc">Groq Llama 3.3 70B with Indian legal system prompt.</div>
+        <ul class="feature-items">
+          <li>Chat session persistence (ChatSession model)</li>
+          <li>Auto-title + sidebar management</li>
+          <li>Markdown rendering</li>
+          <li>Delete sessions</li>
         </ul>
       </div>
 
       <div class="feature-card done">
         <div class="feature-badge badge-done">✓ DONE</div>
         <div class="feature-name">Contract Generator</div>
-        <div class="feature-desc">AI-powered Indian law contract drafting. 5 contract types, PDF + DOCX export.</div>
+        <div class="feature-desc">AI-powered Indian law contract drafting. 5 types, PDF export.</div>
         <ul class="feature-items">
           <li>NDA, Employment, Service, Rental, Freelance</li>
           <li>Indian Contract Act 1872 compliant</li>
@@ -252,64 +287,42 @@
         <ul class="feature-items">
           <li>Razorpay order creation + signature verify</li>
           <li>isPremium flips on successful payment</li>
-          <li>3 contract free limit enforced client + server</li>
-          <li>PlanUsageBar + PremiumModal</li>
-        </ul>
-      </div>
-
-      <div class="feature-card done">
-        <div class="feature-badge badge-done">✓ DONE</div>
-        <div class="feature-name">Monthly Usage Reset</div>
-        <div class="feature-desc">Auto-resets contractsUsed counter every month.</div>
-        <ul class="feature-items">
-          <li>usageResetDate field on User model</li>
-          <li>Auto-reset on generateContract call</li>
-          <li>Accurate reset date shown in usage bar</li>
-          <li>Tested via Compass backdating</li>
+          <li>3 contract free limit — client + server</li>
+          <li>Monthly auto-reset</li>
         </ul>
       </div>
 
       <div class="feature-card partial">
         <div class="feature-badge badge-partial">⟳ IN PROGRESS</div>
-        <div class="feature-name">UI Polish — Day 6</div>
-        <div class="feature-desc">Contract preview enhancements and UX improvements.</div>
+        <div class="feature-name">UI Polish + Security — Week 5</div>
+        <div class="feature-desc">Remaining Week 5 tasks.</div>
         <ul class="feature-items">
-          <li>PlaceholderHighlighter — [PLACEHOLDER] tokens</li>
-          <li>Copy-to-clipboard on contract preview</li>
-          <li>PDF download via html2pdf</li>
-          <li>Loading skeleton on usage bar mount</li>
-          <li>React error boundary</li>
+          <li>✓ SPA routing fixed</li>
+          <li>✓ API centralized</li>
+          <li>⬜ T&C Modal</li>
+          <li>⬜ React Error Boundary</li>
+          <li>⬜ helmet + rate-limit</li>
+          <li>⬜ express-validator</li>
         </ul>
       </div>
 
       <div class="feature-card todo">
         <div class="feature-badge badge-todo">✗ TODO</div>
-        <div class="feature-name">Security Hardening</div>
-        <div class="feature-desc">Must-have before any real users or production deploy.</div>
+        <div class="feature-name">User Profile Page</div>
+        <div class="feature-desc">Account settings, plan status, usage history.</div>
         <ul class="feature-items">
-          <li>express-validator on all POST routes</li>
-          <li>helmet.js + express-rate-limit</li>
-          <li>JWT refresh tokens (replace 7d expiry)</li>
-          <li>Razorpay webhook (prod-grade verify)</li>
-        </ul>
-      </div>
-
-      <div class="feature-card todo">
-        <div class="feature-badge badge-todo">✗ TODO</div>
-        <div class="feature-name">Chat History Persistence</div>
-        <div class="feature-desc">Messages lost on refresh. Need ChatSession model + save/load API.</div>
-        <ul class="feature-items">
-          <li>ChatSession MongoDB model</li>
-          <li>Save messages per user</li>
-          <li>Session sidebar in UI</li>
-          <li>Navbar + Dashboard redesign</li>
+          <li>Profile.jsx page</li>
+          <li>Plan status (Free / Pro)</li>
+          <li>Contracts used this month</li>
+          <li>Logout button</li>
+          <li>Change password (optional)</li>
         </ul>
       </div>
 
       <div class="feature-card todo">
         <div class="feature-badge badge-todo">✗ TODO</div>
         <div class="feature-name">Document Analyzer</div>
-        <div class="feature-desc">Upload PDF/DOCX contracts, AI extracts clauses, risks, obligations.</div>
+        <div class="feature-desc">Upload PDF/DOCX contracts, AI extracts clauses, risks.</div>
         <ul class="feature-items">
           <li>Multer file upload</li>
           <li>pdf-parse / mammoth parsing</li>
@@ -324,17 +337,17 @@
         <div class="feature-desc">Features that separate NyayaAI from every other contract tool.</div>
         <ul class="feature-items">
           <li>Multi-language contracts — Hindi + regional</li>
-          <li>IPC / BNS section citations in contracts</li>
+          <li>BNS / IPC section citations in contracts</li>
           <li>Contract risk scoring — 0–100</li>
           <li>WhatsApp delivery via Twilio</li>
-          <li>Aadhaar e-sign integration</li>
+          <li>Voice input (Speech-to-Text)</li>
         </ul>
       </div>
 
       <div class="feature-card todo">
         <div class="feature-badge badge-todo">✗ TODO</div>
         <div class="feature-name">Case Research + Know Your Rights</div>
-        <div class="feature-desc">Search Indian case law, summarize precedents, applicable statutes.</div>
+        <div class="feature-desc">Search Indian case law, summarize precedents.</div>
         <ul class="feature-items">
           <li>IndianKanoon API integration</li>
           <li>AI case summarization</li>
@@ -346,7 +359,7 @@
       <div class="feature-card todo">
         <div class="feature-badge badge-todo">✗ TODO</div>
         <div class="feature-name">Lawyer Marketplace</div>
-        <div class="feature-desc">Connect users with lawyers for contract review. Second monetization stream.</div>
+        <div class="feature-desc">Connect users with lawyers. Second monetization stream.</div>
         <ul class="feature-items">
           <li>Lawyer profile model + pages</li>
           <li>Contract review request flow</li>
@@ -376,7 +389,6 @@
             <span class="task-chip done-chip">JWT Auth</span>
             <span class="task-chip done-chip">Register / Login</span>
             <span class="task-chip done-chip">Protected Routes</span>
-            <span class="task-chip done-chip">authMiddleware</span>
           </div>
         </div>
       </div>
@@ -404,7 +416,6 @@
             <span class="task-chip done-chip">Contract.js Model</span>
             <span class="task-chip done-chip">contractAI.service.js</span>
             <span class="task-chip done-chip">ContractForm.jsx</span>
-            <span class="task-chip done-chip">ContractPreview.jsx</span>
             <span class="task-chip done-chip">PDF + DOCX Export</span>
             <span class="task-chip done-chip">History + Delete</span>
           </div>
@@ -415,14 +426,16 @@
         <div class="roadmap-dot done-dot">✓</div>
         <div class="roadmap-content">
           <div class="roadmap-week">WEEK 4 — COMPLETE</div>
-          <div class="roadmap-title">Payments & Usage Gating</div>
+          <div class="roadmap-title">Payments + Deploy</div>
           <div class="roadmap-tasks">
             <span class="task-chip done-chip">Razorpay Integration</span>
             <span class="task-chip done-chip">isPremium Flip</span>
-            <span class="task-chip done-chip">Free Limit Enforcement</span>
-            <span class="task-chip done-chip">PlanUsageBar</span>
-            <span class="task-chip done-chip">PremiumModal</span>
             <span class="task-chip done-chip">Monthly Usage Reset</span>
+            <span class="task-chip done-chip">Vercel Deploy</span>
+            <span class="task-chip done-chip">Render Deploy</span>
+            <span class="task-chip done-chip">MongoDB Atlas</span>
+            <span class="task-chip done-chip">API Centralized</span>
+            <span class="task-chip done-chip">SPA Routing Fixed</span>
           </div>
         </div>
       </div>
@@ -431,15 +444,15 @@
         <div class="roadmap-dot active-dot">5</div>
         <div class="roadmap-content">
           <div class="roadmap-week">WEEK 5 — CURRENT</div>
-          <div class="roadmap-title">UI Polish + Security</div>
+          <div class="roadmap-title">UI Polish + Security + Profile</div>
           <div class="roadmap-tasks">
-            <span class="task-chip active-chip">PlaceholderHighlighter</span>
-            <span class="task-chip active-chip">Copy to Clipboard</span>
-            <span class="task-chip active-chip">PDF Download</span>
+            <span class="task-chip active-chip">T&C Modal</span>
             <span class="task-chip active-chip">React Error Boundary</span>
             <span class="task-chip active-chip">helmet + rate-limit</span>
             <span class="task-chip active-chip">express-validator</span>
-            <span class="task-chip active-chip">T&C Modal</span>
+            <span class="task-chip active-chip">Profile Page</span>
+            <span class="task-chip active-chip">Logout</span>
+            <span class="task-chip active-chip">Plan Status UI</span>
           </div>
         </div>
       </div>
@@ -448,22 +461,6 @@
         <div class="roadmap-dot">6</div>
         <div class="roadmap-content">
           <div class="roadmap-week">WEEK 6</div>
-          <div class="roadmap-title">Chat History + Navbar</div>
-          <div class="roadmap-tasks">
-            <span class="task-chip">ChatSession.js</span>
-            <span class="task-chip">Save Messages API</span>
-            <span class="task-chip">Session Sidebar</span>
-            <span class="task-chip">Navbar Redesign</span>
-            <span class="task-chip">Dashboard Redesign</span>
-            <span class="task-chip">JWT Refresh Tokens</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="roadmap-item">
-        <div class="roadmap-dot">7</div>
-        <div class="roadmap-content">
-          <div class="roadmap-week">WEEK 7</div>
           <div class="roadmap-title">Document Analyzer</div>
           <div class="roadmap-tasks">
             <span class="task-chip">Document.js Model</span>
@@ -477,16 +474,30 @@
       </div>
 
       <div class="roadmap-item">
+        <div class="roadmap-dot">7</div>
+        <div class="roadmap-content">
+          <div class="roadmap-week">WEEK 7</div>
+          <div class="roadmap-title">India-Specific Moat</div>
+          <div class="roadmap-tasks">
+            <span class="task-chip">Hindi Contracts</span>
+            <span class="task-chip">BNS / IPC Citations</span>
+            <span class="task-chip">Contract Risk Score</span>
+            <span class="task-chip">Voice Input (STT)</span>
+            <span class="task-chip">WhatsApp Delivery</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
         <div class="roadmap-dot">8</div>
         <div class="roadmap-content">
           <div class="roadmap-week">WEEK 8</div>
-          <div class="roadmap-title">India-Specific Moat</div>
+          <div class="roadmap-title">Case Research + Know Your Rights</div>
           <div class="roadmap-tasks">
-            <span class="task-chip">Multi-language Contracts</span>
-            <span class="task-chip">IPC / BNS Citations</span>
-            <span class="task-chip">Contract Risk Score</span>
-            <span class="task-chip">WhatsApp Delivery</span>
             <span class="task-chip">IndianKanoon API</span>
+            <span class="task-chip">AI Case Summarization</span>
+            <span class="task-chip">KnowYourRights.jsx</span>
+            <span class="task-chip">AI Rights Q&A</span>
           </div>
         </div>
       </div>
@@ -495,13 +506,12 @@
         <div class="roadmap-dot">9</div>
         <div class="roadmap-content">
           <div class="roadmap-week">WEEK 9</div>
-          <div class="roadmap-title">Case Research + Know Your Rights</div>
+          <div class="roadmap-title">E-sign + User Account</div>
           <div class="roadmap-tasks">
-            <span class="task-chip">CaseResearch.jsx</span>
-            <span class="task-chip">AI Case Summarization</span>
-            <span class="task-chip">KnowYourRights.jsx</span>
-            <span class="task-chip">Static Rights by Category</span>
-            <span class="task-chip">AI Rights Q&A</span>
+            <span class="task-chip">Aadhaar E-sign</span>
+            <span class="task-chip">Signature Pad Fallback</span>
+            <span class="task-chip">Signed Contract Storage</span>
+            <span class="task-chip">JWT Refresh Tokens</span>
           </div>
         </div>
       </div>
@@ -510,13 +520,12 @@
         <div class="roadmap-dot">10</div>
         <div class="roadmap-content">
           <div class="roadmap-week">WEEK 10</div>
-          <div class="roadmap-title">User Account + E-sign</div>
+          <div class="roadmap-title">Lawyer Marketplace</div>
           <div class="roadmap-tasks">
-            <span class="task-chip">User Profile Page</span>
-            <span class="task-chip">Plan Status + History</span>
-            <span class="task-chip">Aadhaar E-sign</span>
-            <span class="task-chip">Signature Pad Fallback</span>
-            <span class="task-chip">Signed Contract Storage</span>
+            <span class="task-chip">Lawyer.js Model</span>
+            <span class="task-chip">Lawyer Profiles</span>
+            <span class="task-chip">Review Request Flow</span>
+            <span class="task-chip">Consultation Payment</span>
           </div>
         </div>
       </div>
@@ -525,30 +534,13 @@
         <div class="roadmap-dot">11</div>
         <div class="roadmap-content">
           <div class="roadmap-week">WEEK 11</div>
-          <div class="roadmap-title">Lawyer Marketplace</div>
+          <div class="roadmap-title">Hardening + Launch</div>
           <div class="roadmap-tasks">
-            <span class="task-chip">Lawyer.js Model</span>
-            <span class="task-chip">Lawyer Profiles</span>
-            <span class="task-chip">Review Request Flow</span>
-            <span class="task-chip">Consultation Payment</span>
-            <span class="task-chip">Lawyer Dashboard</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="roadmap-item">
-        <div class="roadmap-dot">12</div>
-        <div class="roadmap-content">
-          <div class="roadmap-week">WEEK 12</div>
-          <div class="roadmap-title">Deploy + Hardening</div>
-          <div class="roadmap-tasks">
-            <span class="task-chip">.env.example</span>
+            <span class="task-chip">Razorpay Webhook</span>
+            <span class="task-chip">E2E Prod Tests</span>
             <span class="task-chip">README.md</span>
-            <span class="task-chip">CONTRACT_TYPES Config</span>
-            <span class="task-chip">MongoDB Atlas Prod</span>
-            <span class="task-chip">Railway/Render Deploy</span>
-            <span class="task-chip">Vercel Deploy</span>
-            <span class="task-chip">E2E Prod Test</span>
+            <span class="task-chip">Landing Page</span>
+            <span class="task-chip">SEO + OG Tags</span>
           </div>
         </div>
       </div>
@@ -556,92 +548,241 @@
     </div>
   </div>
 
-  <!-- SECTION 3: FILE STRUCTURE -->
+  <!-- SECTION 3: VS NYAYA.AI COMPARISON -->
   <div class="section">
     <div class="section-header">
       <span class="section-num">03</span>
+      <h2 class="section-title">NyayaAI vs NYAYA.ai — Competitive Analysis</h2>
+    </div>
+    <div style="background:var(--dark2);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:24px;">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th style="width:22%">FEATURE</th>
+            <th style="width:39%">🔵 NYAYA.ai (Competitor)</th>
+            <th style="width:39%">🟡 NyayaAI (Ours)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tech Stack</td>
+            <td><span class="comp-badge cb-tie">TIE</span><div class="comp-note">Python FastAPI + HTML/CSS/JS frontend. No React, no MERN.</div></td>
+            <td><span class="comp-badge cb-tie">TIE</span><div class="comp-note">MERN stack — React, Node, Express, MongoDB. More scalable, more hireable.</div></td>
+          </tr>
+          <tr>
+            <td>AI Model</td>
+            <td><span class="comp-badge cb-tie">TIE</span><div class="comp-note">Groq + Llama 3.3 70B. Same model.</div></td>
+            <td><span class="comp-badge cb-tie">TIE</span><div class="comp-note">Groq + Llama 3.3 70B. Same model.</div></td>
+          </tr>
+          <tr>
+            <td>RAG / Vector Search</td>
+            <td><span class="comp-badge cb-win">THEY WIN</span><div class="comp-note">Pinecone vector DB + 15,000+ precedents + 395 constitutional articles. Grounded responses, no hallucinations.</div></td>
+            <td><span class="comp-badge cb-lose">WE LOSE</span><div class="comp-note">No RAG yet. Pure LLM — can hallucinate. This is a critical gap to close.</div></td>
+          </tr>
+          <tr>
+            <td>Contract Generation</td>
+            <td><span class="comp-badge cb-lose">THEY LOSE</span><div class="comp-note">Basic template drafting only. No multi-step flow, no history, no usage limits.</div></td>
+            <td><span class="comp-badge cb-win">WE WIN</span><div class="comp-note">Full 3-step flow, 5 Indian law contract types, history, delete, usage gating, PDF + DOCX export.</div></td>
+          </tr>
+          <tr>
+            <td>Monetization</td>
+            <td><span class="comp-badge cb-lose">THEY LOSE</span><div class="comp-note">No payment system. Free only. Not a real product.</div></td>
+            <td><span class="comp-badge cb-win">WE WIN</span><div class="comp-note">Razorpay ₹499/mo plan, free tier with limits, monthly reset. Real revenue model.</div></td>
+          </tr>
+          <tr>
+            <td>User Accounts</td>
+            <td><span class="comp-badge cb-lose">THEY LOSE</span><div class="comp-note">No auth, no user model, no persistence. Stateless app.</div></td>
+            <td><span class="comp-badge cb-win">WE WIN</span><div class="comp-note">Full JWT auth, user model, isPremium, chat history, contract history per user.</div></td>
+          </tr>
+          <tr>
+            <td>Production Deploy</td>
+            <td><span class="comp-badge cb-tie">TIE</span><div class="comp-note">Live on Vercel + HuggingFace. Free tier — backend sleeps.</div></td>
+            <td><span class="comp-badge cb-tie">TIE</span><div class="comp-note">Live on Vercel + Render + Atlas. Render free tier also sleeps. Upgrade needed for prod.</div></td>
+          </tr>
+          <tr>
+            <td>BNS / IPC Citations</td>
+            <td><span class="comp-badge cb-win">THEY WIN</span><div class="comp-note">Core feature. BNS Code Assistant, IPC to BNS mapping built-in.</div></td>
+            <td><span class="comp-badge cb-lose">WE LOSE</span><div class="comp-note">Planned Week 7. Not built yet.</div></td>
+          </tr>
+          <tr>
+            <td>Voice / Multilingual</td>
+            <td><span class="comp-badge cb-win">THEY WIN</span><div class="comp-note">Speech-to-text in Hinglish + Hindi. Multilingual planned.</div></td>
+            <td><span class="comp-badge cb-lose">WE LOSE</span><div class="comp-note">Planned Week 7. Not built yet.</div></td>
+          </tr>
+          <tr>
+            <td>PDF Upload / Analysis</td>
+            <td><span class="comp-badge cb-win">THEY WIN</span><div class="comp-note">OCR + risk analysis on uploaded legal docs.</div></td>
+            <td><span class="comp-badge cb-lose">WE LOSE</span><div class="comp-note">Planned Week 6. Not built yet.</div></td>
+          </tr>
+          <tr>
+            <td>Lawyer Marketplace</td>
+            <td><span class="comp-badge cb-lose">THEY LOSE</span><div class="comp-note">No marketplace. No human-in-loop.</div></td>
+            <td><span class="comp-badge cb-win">WE WIN (planned)</span><div class="comp-note">Week 10. Second revenue stream. Unique differentiator.</div></td>
+          </tr>
+          <tr>
+            <td>UI Quality</td>
+            <td><span class="comp-badge cb-win">THEY WIN</span><div class="comp-note">Glassmorphism dark UI, live ticker, quick-action chips. Polished.</div></td>
+            <td><span class="comp-badge cb-lose">WE LOSE NOW</span><div class="comp-note">Login/Register pages are plain HTML. Dashboard looks good. Needs landing page + register redesign.</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SCORE -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px;">
+      <div style="background:rgba(90,155,224,0.06);border:1px solid rgba(90,155,224,0.2);border-radius:8px;padding:20px;text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#888;margin-bottom:8px;">NYAYA.ai WINS</div>
+        <div style="font-size:32px;font-weight:700;color:#888;">4</div>
+        <div style="font-size:12px;color:#666;margin-top:4px;">RAG · BNS · Voice · PDF Upload · UI</div>
+      </div>
+      <div style="background:rgba(201,168,76,0.06);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);margin-bottom:8px;">NyayaAI WINS</div>
+        <div style="font-size:32px;font-weight:700;color:var(--gold)">5</div>
+        <div style="font-size:12px;color:#666;margin-top:4px;">Contracts · Payments · Auth · History · Marketplace</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: SUGGESTED CHANGES -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Suggested Changes Based on Comparison</h2>
+    </div>
+    <div class="suggest-grid">
+
+      <div class="suggest-card urgent">
+        <div class="feature-badge badge-todo">🔴 URGENT</div>
+        <div class="suggest-title">Add RAG / Vector Search</div>
+        <div class="suggest-why">Biggest gap vs competitor. Pure LLM hallucinates Indian law. Add Pinecone + embed Constitution + BNS acts. Even 500 documents = massive credibility boost. This alone separates a toy from a real legal product.</div>
+      </div>
+
+      <div class="suggest-card urgent">
+        <div class="feature-badge badge-todo">🔴 URGENT</div>
+        <div class="suggest-title">Redesign Login + Register Pages</div>
+        <div class="suggest-why">Currently plain HTML — looks unfinished vs competitor's glassmorphism UI. First impression = everything. Redesign Register page to match the dark gold aesthetic of ContractGenerator. 1-2 hour task, massive impact.</div>
+      </div>
+
+      <div class="suggest-card">
+        <div class="feature-badge badge-next">🔵 HIGH VALUE</div>
+        <div class="suggest-title">Move Profile to Week 5 (Now)</div>
+        <div class="suggest-why">Users need to see their plan status, usage, and logout option. Without Profile page, premium users can't verify they're on Pro plan. Simple to build — Profile.jsx + GET /api/users/me endpoint.</div>
+      </div>
+
+      <div class="suggest-card">
+        <div class="feature-badge badge-next">🔵 HIGH VALUE</div>
+        <div class="suggest-title">Add Voice Input (Week 7)</div>
+        <div class="suggest-why">Competitor has it. For Indian users — especially non-English speakers — voice in Hindi/Hinglish is a massive UX win. Web Speech API is free and works in Chrome. 1 day of work.</div>
+      </div>
+
+      <div class="suggest-card moat">
+        <div class="feature-badge" style="background:rgba(155,90,224,0.15);color:var(--purple);border:1px solid rgba(155,90,224,0.3);">🟣 MOAT</div>
+        <div class="suggest-title">Build Landing Page Before Week 11</div>
+        <div class="suggest-why">Competitor has one. Without a landing page, the app opens to Register — no context for new users. A simple hero + features + pricing page = credibility, SEO, and conversion. Move to Week 6.</div>
+      </div>
+
+      <div class="suggest-card moat">
+        <div class="feature-badge" style="background:rgba(155,90,224,0.15);color:var(--purple);border:1px solid rgba(155,90,224,0.3);">🟣 MOAT</div>
+        <div class="suggest-title">Upgrade Render to Paid ($7/mo)</div>
+        <div class="suggest-why">Both apps use free hosting that sleeps. First request takes 30–60 seconds. This kills conversion. $7/mo on Render = always-on backend. Before showing to any real user or investor, this is non-negotiable.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 5: FILE STRUCTURE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
       <h2 class="section-title">Current Project Structure</h2>
     </div>
     <div class="file-tree">
       <div class="tree-dir">NyayaAI/</div>
       <div class="tree-indent">
+        <div class="tree-file done">vercel.json <span class="tree-label lbl-done">done — SPA routing</span></div>
         <div class="tree-dir">server/</div>
         <div class="tree-indent">
-          <div class="tree-file done">app.js <span class="tree-label lbl-done">done</span></div>
           <div class="tree-file done">server.js <span class="tree-label lbl-done">done</span></div>
           <div class="tree-dir">config/</div>
           <div class="tree-indent">
-            <div class="tree-file done">db.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">razorpay.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">logger.js <span class="tree-label lbl-done">done</span></div>
+            <div class="tree-file done">db.js</div>
+            <div class="tree-file done">razorpay.js</div>
           </div>
           <div class="tree-dir">models/</div>
           <div class="tree-indent">
-            <div class="tree-file done">User.js <span class="tree-label lbl-done">done — isPremium, contractsUsed, usageResetDate</span></div>
-            <div class="tree-file done">Contract.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file new">ChatSession.js <span class="tree-label lbl-new">to build</span></div>
-            <div class="tree-file new">Document.js <span class="tree-label lbl-new">to build</span></div>
-            <div class="tree-file new">Lawyer.js <span class="tree-label lbl-new">to build</span></div>
+            <div class="tree-file done">User.js <span class="tree-label lbl-done">isPremium, contractsUsed, usageResetDate</span></div>
+            <div class="tree-file done">Contract.js</div>
+            <div class="tree-file done">ChatSession.js</div>
+            <div class="tree-file new">Document.js <span class="tree-label lbl-new">week 6</span></div>
+            <div class="tree-file new">Lawyer.js <span class="tree-label lbl-new">week 10</span></div>
           </div>
           <div class="tree-dir">controllers/</div>
           <div class="tree-indent">
-            <div class="tree-file done">userController.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">queryController.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">contractController.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">paymentController.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file new">documentController.js <span class="tree-label lbl-new">to build</span></div>
+            <div class="tree-file done">userController.js</div>
+            <div class="tree-file done">queryController.js</div>
+            <div class="tree-file done">contractController.js</div>
+            <div class="tree-file done">paymentController.js</div>
+            <div class="tree-file done">chatController.js</div>
+            <div class="tree-file new">documentController.js <span class="tree-label lbl-new">week 6</span></div>
           </div>
           <div class="tree-dir">routes/</div>
           <div class="tree-indent">
-            <div class="tree-file done">userRoutes.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">queryRoutes.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">contractRoutes.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">paymentRoutes.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file new">documentRoutes.js <span class="tree-label lbl-new">to build</span></div>
+            <div class="tree-file done">userRoutes.js</div>
+            <div class="tree-file done">queryRoutes.js</div>
+            <div class="tree-file done">contractRoutes.js</div>
+            <div class="tree-file done">paymentRoutes.js</div>
+            <div class="tree-file done">chatRoutes.js</div>
+            <div class="tree-file new">documentRoutes.js <span class="tree-label lbl-new">week 6</span></div>
           </div>
           <div class="tree-dir">middleware/</div>
           <div class="tree-indent">
-            <div class="tree-file done">authMiddleware.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file new">uploadMiddleware.js <span class="tree-label lbl-new">to build</span></div>
+            <div class="tree-file done">authMiddleware.js</div>
+            <div class="tree-file new">uploadMiddleware.js <span class="tree-label lbl-new">week 6</span></div>
           </div>
           <div class="tree-dir">services/</div>
           <div class="tree-indent">
-            <div class="tree-file done">contractAI.service.js <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file new">documentAI.service.js <span class="tree-label lbl-new">to build</span></div>
+            <div class="tree-file done">contractAI.service.js</div>
+            <div class="tree-file new">documentAI.service.js <span class="tree-label lbl-new">week 6</span></div>
           </div>
         </div>
         <div class="tree-dir">client/src/</div>
         <div class="tree-indent">
-          <div class="tree-file done">App.jsx <span class="tree-label lbl-done">done</span></div>
+          <div class="tree-file done">App.jsx <span class="tree-label lbl-done">token state fixed</span></div>
+          <div class="tree-dir">services/</div>
+          <div class="tree-indent">
+            <div class="tree-file done">api.js <span class="tree-label lbl-done">centralized axios + JWT interceptor</span></div>
+          </div>
           <div class="tree-dir">pages/</div>
           <div class="tree-indent">
-            <div class="tree-file done">Login.jsx <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">Register.jsx <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">Dashboard.jsx <span class="tree-label lbl-done">done — needs redesign</span></div>
-            <div class="tree-file done">ContractGenerator.jsx <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file new">DocumentAnalyzer.jsx <span class="tree-label lbl-new">to build</span></div>
-            <div class="tree-file new">CaseResearch.jsx <span class="tree-label lbl-new">to build</span></div>
-            <div class="tree-file new">KnowYourRights.jsx <span class="tree-label lbl-new">to build</span></div>
+            <div class="tree-file done">Login.jsx</div>
+            <div class="tree-file done">Register.jsx</div>
+            <div class="tree-file done">Dashboard.jsx</div>
+            <div class="tree-file done">ContractGenerator.jsx</div>
+            <div class="tree-file new">Profile.jsx <span class="tree-label lbl-new">week 5</span></div>
+            <div class="tree-file new">DocumentAnalyzer.jsx <span class="tree-label lbl-new">week 6</span></div>
+            <div class="tree-file new">CaseResearch.jsx <span class="tree-label lbl-new">week 8</span></div>
+            <div class="tree-file new">Landing.jsx <span class="tree-label lbl-new">week 6</span></div>
           </div>
           <div class="tree-dir">components/</div>
           <div class="tree-indent">
-            <div class="tree-file done">ChatBubble.jsx <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">Loader.jsx <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">ContractForm.jsx <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">ContractPreview.jsx <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file done">PremiumModal.jsx <span class="tree-label lbl-done">done</span></div>
-            <div class="tree-file new">Navbar.jsx <span class="tree-label lbl-new">to build</span></div>
-            <div class="tree-file new">ErrorBoundary.jsx <span class="tree-label lbl-new">to build</span></div>
+            <div class="tree-file done">ChatBubble.jsx</div>
+            <div class="tree-file done">Loader.jsx</div>
+            <div class="tree-file done">ContractForm.jsx</div>
+            <div class="tree-file done">ContractPreview.jsx</div>
+            <div class="tree-file done">PremiumModal.jsx</div>
+            <div class="tree-file new">TermsModal.jsx <span class="tree-label lbl-new">week 5 — next</span></div>
+            <div class="tree-file new">ErrorBoundary.jsx <span class="tree-label lbl-new">week 5</span></div>
+            <div class="tree-file new">Navbar.jsx <span class="tree-label lbl-new">week 5</span></div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SECTION 4: INDIAN LAW -->
+  <!-- SECTION 6: INDIAN LAW -->
   <div class="section">
     <div class="section-header">
-      <span class="section-num">04</span>
+      <span class="section-num">06</span>
       <h2 class="section-title">Indian Legal Framework</h2>
     </div>
     <div style="background:var(--dark2);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
@@ -657,17 +798,16 @@
           <tr><td>Arbitration & Conciliation Act</td><td>1996</td><td>Dispute resolution clause in all contracts</td></tr>
           <tr><td>DPDP Act (Data Protection)</td><td>2023</td><td>Privacy clauses in SaaS & NDA agreements</td></tr>
           <tr><td>Income Tax Act (TDS 194J)</td><td>1961</td><td>Freelance / Service agreements</td></tr>
-          <tr><td>Shops & Establishments Act</td><td>State-wise</td><td>Employment contracts by state</td></tr>
           <tr><td>Bharatiya Nyaya Sanhita (BNS)</td><td>2023</td><td>Replaces IPC — criminal law citations</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- SECTION 5: TECH STACK -->
+  <!-- SECTION 7: TECH STACK -->
   <div class="section">
     <div class="section-header">
-      <span class="section-num">05</span>
+      <span class="section-num">07</span>
       <h2 class="section-title">Tech Stack</h2>
     </div>
     <div class="stack-grid">
@@ -704,8 +844,9 @@
           <span class="stack-tag">Groq SDK</span>
           <span class="stack-tag">Llama 3.3 70B</span>
           <span class="stack-tag">Vercel</span>
-          <span class="stack-tag">Railway / Render</span>
+          <span class="stack-tag">Render</span>
           <span class="stack-tag">MongoDB Atlas</span>
+          <span class="stack-tag">Pinecone (planned)</span>
           <span class="stack-tag">Twilio (planned)</span>
         </div>
       </div>
@@ -715,18 +856,21 @@
   <!-- MILESTONES -->
   <div class="section">
     <div class="section-header">
-      <span class="section-num">06</span>
+      <span class="section-num">08</span>
       <h2 class="section-title">Milestones</h2>
     </div>
     <div style="background:var(--dark2);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
       <table class="law-table">
         <thead><tr><th>MILESTONE</th><th>TARGET</th><th>STATUS</th></tr></thead>
         <tbody>
-          <tr><td>Deployable MVP</td><td>End of Week 12</td><td style="color:var(--gold)">In Progress</td></tr>
-          <tr><td>India-specific moat</td><td>Week 8</td><td style="color:var(--red)">Not Started</td></tr>
-          <tr><td>Real monetization live</td><td>Week 11</td><td style="color:var(--red)">Not Started</td></tr>
-          <tr><td>Fundable product</td><td>After Week 11</td><td style="color:var(--red)">Not Started</td></tr>
+          <tr><td>App Live in Production</td><td>Week 4</td><td style="color:var(--green)">✓ Done</td></tr>
           <tr><td>Security hardened</td><td>Week 5</td><td style="color:var(--gold)">In Progress</td></tr>
+          <tr><td>Profile + T&C</td><td>Week 5</td><td style="color:var(--gold)">In Progress</td></tr>
+          <tr><td>Document Analyzer</td><td>Week 6</td><td style="color:var(--red)">Not Started</td></tr>
+          <tr><td>India-specific moat</td><td>Week 7</td><td style="color:var(--red)">Not Started</td></tr>
+          <tr><td>RAG / Vector Search</td><td>Week 7–8</td><td style="color:var(--red)">Not Started — Critical Gap</td></tr>
+          <tr><td>Real monetization live</td><td>Week 10</td><td style="color:var(--gold)">Razorpay done, Marketplace pending</td></tr>
+          <tr><td>Fundable product</td><td>After Week 10</td><td style="color:var(--red)">Not Started</td></tr>
         </tbody>
       </table>
     </div>
@@ -736,11 +880,8 @@
 
 <div class="footer">
   <div class="footer-brand">⚖️ NyayaAI</div>
-  <div class="footer-note">Built for Indian businesses & startups · MERN + Groq AI · Updated April 2026</div>
+  <div class="footer-note">Built for Indian businesses & startups · MERN + Groq AI · Updated April 18, 2026 · LIVE on Vercel</div>
 </div>
 
 </body>
 </html>
-
-
-

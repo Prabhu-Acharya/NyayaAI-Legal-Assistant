@@ -22,7 +22,7 @@ function Login({ onLoginSuccess }) {
         return;
       }
 
-      onLoginSuccess(data.token);
+      onLoginSuccess(data.token, data.hasAcceptedTerms ?? false); // ← patched
 
     } catch (err) {
       setError(err.response?.data?.message || "Login failed ❌");
@@ -33,24 +33,11 @@ function Login({ onLoginSuccess }) {
   return (
     <div>
       <h2>Login Page</h2>
-
-      <input
-        name="email"
-        placeholder="Enter Email"
-        onChange={handleChange}
-      />
+      <input name="email" placeholder="Enter Email" onChange={handleChange} />
       <br /><br />
-
-      <input
-        name="password"
-        type="password"
-        placeholder="Enter Password"
-        onChange={handleChange}
-      />
+      <input name="password" type="password" placeholder="Enter Password" onChange={handleChange} />
       <br /><br />
-
       {error && <p style={{ color: "red" }}>{error}</p>}
-
       <button onClick={handleLogin} disabled={loading}>
         {loading ? "Logging in..." : "Login"}
       </button>
