@@ -1,6 +1,6 @@
 // server/routes/documentRoutes.js
 const express = require("express");
-const { protect } = require("../middleware/authMiddleware");
+const protect = require("../middleware/authMiddleware");
 const { upload, handleUploadError } = require("../middleware/uploadMiddleware");
 const {
   uploadDocument,
