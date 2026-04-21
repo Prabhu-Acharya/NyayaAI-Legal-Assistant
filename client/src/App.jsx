@@ -2,6 +2,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ContractGenerator from "./pages/ContractGenerator";
+import DocumentAnalyzer from "./pages/DocumentAnalyzer"; // ← NEW
 import DashboardLayout from "./layouts/DashboardLayout";
 import TermsModal from "./components/TermsModal";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -77,6 +78,7 @@ function App() {
           >
             <Route index element={<Dashboard />} />
             <Route path="contracts" element={<ContractGenerator />} />
+            <Route path="analyze" element={<DocumentAnalyzer />} /> {/* ← NEW */}
             <Route path="profile" element={<Profile onLogout={handleLogout} />} />
           </Route>
           <Route

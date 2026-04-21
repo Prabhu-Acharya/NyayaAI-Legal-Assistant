@@ -1,14 +1,18 @@
+// client/src/layouts/DashboardLayout.jsx
 import { NavLink, Outlet } from "react-router-dom";
-import { MessageCircle, FileText, User, LogOut } from "lucide-react";
+import { MessageCircle, FileText, User, LogOut, FileSearch } from "lucide-react";
+import TopBar from "../components/TopBar";
 
 const navLinks = [
   { to: "/dashboard",           label: "Legal Assistant",    icon: MessageCircle, end: true },
   { to: "/dashboard/contracts", label: "Contract Generator", icon: FileText },
+  { to: "/dashboard/analyze",   label: "Analyze Doc",        icon: FileSearch },
   { to: "/dashboard/profile",   label: "Profile",            icon: User },
 ];
 
 const DashboardLayout = ({ onLogout }) => (
   <div className="h-screen flex">
+    {/* Sidebar */}
     <aside className="w-56 bg-gray-900 text-white flex flex-col shrink-0">
       <div className="px-5 py-4 text-lg font-bold border-b border-gray-700">
         ⚖️ NyayaAI
@@ -42,9 +46,14 @@ const DashboardLayout = ({ onLogout }) => (
         </button>
       </div>
     </aside>
-    <main className="flex-1 overflow-y-auto">
-      <Outlet />
-    </main>
+
+    {/* Main: TopBar + page content */}
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <TopBar />
+      <main className="flex-1 overflow-y-auto">
+        <Outlet />
+      </main>
+    </div>
   </div>
 );
 

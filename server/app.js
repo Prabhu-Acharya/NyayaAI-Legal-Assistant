@@ -6,9 +6,10 @@ const rateLimit = require("express-rate-limit");
 // Route files
 const userRoutes = require("./routes/userRoutes");
 const queryRoutes = require("./routes/queryRoutes");
-const contractRoutes = require("./routes/contractRoutes"); // ← NEW
+const contractRoutes = require("./routes/contractRoutes");
 const paymentRoutes = require('./routes/paymentRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const documentRoutes = require('./routes/documentRoutes'); // ← NEW
 
 const app = express();
 
@@ -21,33 +22,41 @@ app.use(express.json());
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────
 const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,             // 100 requests per window
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: { message: "Too many requests. Please try again later." },
 });
 
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10,              // 10 login/register attempts per window
+  windowMs: 15 * 60 * 1000,
+  max: 10,
   message: { message: "Too many auth attempts. Please try again in 15 minutes." },
 });
 
 const generateLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 20,              // 20 contract generations per hour
+  windowMs: 60 * 60 * 1000,
+  max: 20,
   message: { message: "Generation limit reached. Please try again in an hour." },
 });
 
-app.use( generalLimiter);
+const uploadLimiter = rateLimit({           // ← NEW: 10 uploads/hour per IP
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  message: { message: "Upload limit reached. Please try again in an hour." },
+});
+
+app.use(generalLimiter);
 app.use("/api/users/login", authLimiter);
 app.use("/api/users/register", authLimiter);
 app.use("/api/contracts/generate", generateLimiter);
+app.use("/api/documents/upload", uploadLimiter); // ← NEW
 
 app.use("/api/users", userRoutes);
 app.use("/api/query", queryRoutes);
-app.use("/api/contracts", contractRoutes); // ← NEW
+app.use("/api/contracts", contractRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/documents', documentRoutes); // ← NEW
 
 app.get("/", (req, res) => {
   res.send("NyayaAI API Running ✅");
