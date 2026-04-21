@@ -1,7 +1,6 @@
 // client/src/components/TopBar.jsx
 import { useLocation } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "./AuthContext";
+import { useAuth } from "./AuthContext";
 
 const routeLabels = {
   "/dashboard":           "Legal Assistant",
@@ -11,17 +10,15 @@ const routeLabels = {
 };
 
 export default function TopBar() {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const { pathname } = useLocation();
 
   const pageTitle = routeLabels[pathname] ?? "NyayaAI";
 
   return (
     <header className="h-14 bg-white border-b border-gray-200 px-6 flex items-center justify-between shrink-0">
-      {/* Page title */}
       <h1 className="text-base font-semibold text-gray-800">{pageTitle}</h1>
 
-      {/* Right side */}
       <div className="flex items-center gap-3">
         {user?.isPremium && (
           <span className="text-xs bg-yellow-100 text-yellow-700 font-semibold px-2.5 py-1 rounded-full">
