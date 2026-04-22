@@ -1,7 +1,6 @@
 // server/services/documentAI.service.js
 const Groq = require("groq-sdk");
-const pdfParseLib = require("pdf-parse");
-const pdfParse = typeof pdfParseLib === "function" ? pdfParseLib : pdfParseLib.default;
+const pdfjsLib = require("pdfjs-dist/legacy/build/pdf.js");
 const mammoth = require("mammoth");
 const fs = require("fs");
 
@@ -9,14 +8,19 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 // ─── Text Extraction ──────────────────────────────────────────────────────────
 async function extractText(filePath, mimeType) {
-  const buffer = fs.readFileSync(filePath);
-
   if (mimeType === "application/pdf") {
-    const data = await pdfParse(buffer);
-    return data.text?.trim() || "";
+    const data = new Uint8Array(fs.readFileSync(filePath));
+    const doc = await pdfjsLib.getDocument({ data }).promise;
+    let text = "";
+    for (let i = 1; i <= doc.numPages; i++) {
+      const page = await doc.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map((item) => item.str).join(" ") + "\n";
+    }
+    return text.trim();
   }
 
-  const { value } = await mammoth.extractRawText({ buffer });
+  const { value } = await mammoth.extractRawText({ buffer: fs.readFileSync(filePath) });
   return value?.trim() || "";
 }
 
@@ -60,13 +64,13 @@ async function analyseDocument(extractedText) {
   }
 
   return {
-    summary:         parsed.summary         || "",
-    keyFindings:     parsed.keyFindings      || [],
-    riskFlags:       parsed.riskFlags        || [],
-    recommendations: parsed.recommendations  || [],
-    riskScore:       Number(parsed.riskScore) || 0,
-    riskRationale:   parsed.riskRationale    || "",
-    rawResponse:     raw,
+    summary: parsed.summary || "",
+    keyFindings: parsed.keyFindings || [],
+    riskFlags: parsed.riskFlags || [],
+    recommendations: parsed.recommendations || [],
+    riskScore: Number(parsed.riskScore) || 0,
+    riskRationale: parsed.riskRationale || "",
+    rawResponse: raw,
   };
 }
 
