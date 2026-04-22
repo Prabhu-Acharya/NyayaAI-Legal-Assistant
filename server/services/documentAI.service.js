@@ -1,7 +1,6 @@
 // server/services/documentAI.service.js
 const Groq = require("groq-sdk");
-const { PDFParse } = require("pdf-parse");
-const pdfParser = new PDFParse();
+const PDFParser = require("pdf2json");
 const mammoth = require("mammoth");
 const fs = require("fs");
 
@@ -9,16 +8,26 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 // ─── Text Extraction ──────────────────────────────────────────────────────────
 async function extractText(filePath, mimeType) {
-  const buffer = fs.readFileSync(filePath);  // move up
-
   if (mimeType === "application/pdf") {
-    const data = await pdfParser.parse(buffer);
-    return data.text?.trim() || "";
+    return new Promise((resolve, reject) => {
+      const parser = new PDFParser();
+      parser.on("pdfParser_dataReady", (data) => {
+        const text = data.Pages
+          .flatMap(p => p.Texts)
+          .map(t => decodeURIComponent(t.R.map(r => r.T).join("")))
+          .join(" ");
+        resolve(text.trim());
+      });
+      parser.on("pdfParser_dataError", reject);
+      parser.loadPDF(filePath);
+    });
   }
 
+  const buffer = fs.readFileSync(filePath);
   const { value } = await mammoth.extractRawText({ buffer });
   return value?.trim() || "";
 }
+
 
 // ─── Groq Analysis ───────────────────────────────────────────────────────────
 const SYSTEM_PROMPT = `You are NyayaAI — an expert Indian legal document analyst.
