@@ -1,6 +1,7 @@
 // server/services/documentAI.service.js
 const Groq = require("groq-sdk");
-const pdfParse = require("pdf-parse");
+const pdfParseModule = require("pdf-parse");
+const pdfParse = typeof pdfParseModule === "function" ? pdfParseModule : pdfParseModule.default || pdfParseModule;
 const mammoth = require("mammoth");
 const fs = require("fs");
 
