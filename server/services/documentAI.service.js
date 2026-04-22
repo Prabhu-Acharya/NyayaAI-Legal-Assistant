@@ -1,7 +1,7 @@
 // server/services/documentAI.service.js
 const Groq = require("groq-sdk");
-const pdfParseModule = require("pdf-parse");
-const pdfParse = typeof pdfParseModule === "function" ? pdfParseModule : pdfParseModule.default || pdfParseModule;
+const { PDFParse } = require("pdf-parse");
+const pdfParser = new PDFParse();
 const mammoth = require("mammoth");
 const fs = require("fs");
 
@@ -9,14 +9,13 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 // ─── Text Extraction ──────────────────────────────────────────────────────────
 async function extractText(filePath, mimeType) {
-  const buffer = fs.readFileSync(filePath);
+  const buffer = fs.readFileSync(filePath);  // move up
 
   if (mimeType === "application/pdf") {
-    const data = await pdfParse(buffer);
+    const data = await pdfParser.parse(buffer);
     return data.text?.trim() || "";
   }
 
-  // DOCX / DOC
   const { value } = await mammoth.extractRawText({ buffer });
   return value?.trim() || "";
 }
@@ -61,13 +60,13 @@ async function analyseDocument(extractedText) {
   }
 
   return {
-    summary:         parsed.summary         || "",
-    keyFindings:     parsed.keyFindings      || [],
-    riskFlags:       parsed.riskFlags        || [],
-    recommendations: parsed.recommendations  || [],
-    riskScore:       Number(parsed.riskScore) || 0,
-    riskRationale:   parsed.riskRationale    || "",
-    rawResponse:     raw,
+    summary: parsed.summary || "",
+    keyFindings: parsed.keyFindings || [],
+    riskFlags: parsed.riskFlags || [],
+    recommendations: parsed.recommendations || [],
+    riskScore: Number(parsed.riskScore) || 0,
+    riskRationale: parsed.riskRationale || "",
+    rawResponse: raw,
   };
 }
 
