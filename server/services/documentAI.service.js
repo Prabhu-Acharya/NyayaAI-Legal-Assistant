@@ -1,6 +1,6 @@
 // server/services/documentAI.service.js
 const Groq = require("groq-sdk");
-const pdfjsLib = require("pdfjs-dist/legacy/build/pdf.js");
+const pdfjsLib = require("pdfjs-dist");;
 const mammoth = require("mammoth");
 const fs = require("fs");
 
