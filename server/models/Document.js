@@ -1,4 +1,3 @@
-// server/models/Document.js
 const mongoose = require("mongoose");
 
 const documentSchema = new mongoose.Schema(
@@ -9,10 +8,10 @@ const documentSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    originalName: { type: String, required: true },
-    storedName:   { type: String, required: true },
-    mimeType:     { type: String, required: true },
-    sizeBytes:    { type: Number, required: true },
+    originalName:  { type: String, required: true },
+    storedName:    { type: String, required: true },
+    mimeType:      { type: String, required: true },
+    sizeBytes:     { type: Number, required: true },
     extractedText: { type: String, default: "" },
     analysis: {
       summary:         { type: String, default: "" },
@@ -37,15 +36,5 @@ const documentSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-documentSchema.pre("save", function (next) {
-  if (this.riskScore !== null) {
-    if      (this.riskScore >= 75) this.riskLevel = "critical";
-    else if (this.riskScore >= 50) this.riskLevel = "high";
-    else if (this.riskScore >= 25) this.riskLevel = "medium";
-    else                           this.riskLevel = "low";
-  }
-  next();
-});
 
 module.exports = mongoose.model("Document", documentSchema);
