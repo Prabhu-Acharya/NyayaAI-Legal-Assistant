@@ -48,6 +48,7 @@ function PlanUsageBar({ used, limit, isPremium, resetDate, onUpgrade }) {
   const atLimit = used >= limit;
   const remaining = Math.max(limit - used, 0);
 
+
   const formattedResetDate = resetDate
     ? new Date(resetDate).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })
     : new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)
@@ -106,6 +107,7 @@ export default function ContractGenerator() {
   const [success, setSuccess] = useState("");
   const [usage, setUsage] = useState({ used: 0, limit: FREE_LIMIT, isPremium: false, resetDate: null });
   const [showModal, setShowModal] = useState(false);
+  const [language, setLanguage] = useState("english");
 
   useEffect(() => {
     const fetchUsage = async () => {
@@ -155,6 +157,7 @@ export default function ContractGenerator() {
       const { data } = await API.post("/api/contracts/generate", {
         type: selectedType,
         formData,
+        language,
       });
 
       if (data.upgradeRequired) {
@@ -279,6 +282,8 @@ export default function ContractGenerator() {
                 onGenerate={handleGenerate}
                 loading={loading}
                 atLimit={atLimit}
+                language={language}
+                onLanguageChange={setLanguage}
               />
             )}
             {step === 3 && contract && (

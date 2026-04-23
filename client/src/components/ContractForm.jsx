@@ -143,8 +143,34 @@ export const CONTRACT_TYPES = {
   },
 };
 
+// Add after CONTRACT_TYPES object, before styles export
+export const LANGUAGES = [
+  { value: "english", label: "English", nativeLabel: "English" },
+  { value: "hindi", label: "Hindi", nativeLabel: "हिंदी" },
+  { value: "marathi", label: "Marathi", nativeLabel: "मराठी" },
+  { value: "tamil", label: "Tamil", nativeLabel: "தமிழ்" },
+  { value: "telugu", label: "Telugu", nativeLabel: "తెలుగు" },
+  { value: "bengali", label: "Bengali", nativeLabel: "বাংলা" },
+  { value: "gujarati", label: "Gujarati", nativeLabel: "ગુજરાતી" },
+  { value: "kannada", label: "Kannada", nativeLabel: "ಕನ್ನಡ" },
+];
+
 // ── Shared styles (exported so ContractPreview.jsx can reuse them) ─────────────
 export const styles = {
+
+  // Inside styles object, add:
+  languageSelect: {
+    width: "100%", padding: "11px 14px", borderRadius: "8px",
+    border: "1px solid rgba(201,168,76,0.4)", background: "rgba(255,255,255,0.06)",
+    color: "#e8e0d0", fontSize: "14px", fontFamily: "sans-serif",
+    outline: "none", boxSizing: "border-box", cursor: "pointer",
+  },
+  languageBadge: {
+    display: "inline-flex", alignItems: "center", gap: "6px",
+    padding: "4px 10px", borderRadius: "20px",
+    background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.3)",
+    fontSize: "12px", color: "#c9a84c", fontFamily: "sans-serif",
+  },
   card: {
     background: "rgba(255,255,255,0.04)",
     border: "1px solid rgba(201,168,76,0.2)",
@@ -259,6 +285,8 @@ export function ContractFieldForm({
   onGenerate,
   loading,
   atLimit,
+  language,           // ← add
+  onLanguageChange,   // ← add
 }) {
   const cfg = CONTRACT_TYPES[selectedType];
   if (!cfg) return null;
@@ -270,6 +298,31 @@ export function ContractFieldForm({
         <span style={{ fontSize: "28px" }}>{cfg.icon}</span>
         <div style={{ ...styles.sectionTitle, margin: 0 }}>
           {cfg.label} — Party Details
+        </div>
+      </div>
+
+      {/* Language Picker */}
+      <div style={{ marginBottom: "20px" }}>
+        <label style={styles.label}>
+          Contract Language / अनुबंध भाषा
+        </label>
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <select
+            style={styles.languageSelect}
+            value={language}
+            onChange={(e) => onLanguageChange(e.target.value)}
+          >
+            {LANGUAGES.map((l) => (
+              <option key={l.value} value={l.value}>
+                {l.nativeLabel} — {l.label}
+              </option>
+            ))}
+          </select>
+          {language !== "english" && (
+            <span style={styles.languageBadge}>
+              🇮🇳 Regional
+            </span>
+          )}
         </div>
       </div>
 
@@ -321,8 +374,14 @@ export function ContractFieldForm({
         </button>
       </div>
 
+
       <p style={{ marginTop: "16px", fontSize: "12px", color: "#555", fontFamily: "sans-serif" }}>
         🔒 Indian Contract Act 1872 · Arbitration & Conciliation Act 1996 · Stamp duty notice included
+        {language !== "english" && (
+          <span style={{ color: "#c9a84c", marginLeft: "8px" }}>
+            · {LANGUAGES.find(l => l.value === language)?.nativeLabel} contract
+          </span>
+        )}
       </p>
     </div>
   );

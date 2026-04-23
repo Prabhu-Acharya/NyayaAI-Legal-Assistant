@@ -6,8 +6,9 @@
 //   • PDF download via html2pdf.js
 // ─────────────────────────────────────────────────────────────────────────────
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { styles } from "./ContractForm";
+import API from "../services/api";
 
 const localStyles = {
   contractPreview: {
@@ -127,18 +128,135 @@ function loadHtml2Pdf() {
       return;
     }
     const script = document.createElement("script");
-    script.id  = "html2pdf-script";
+    script.id = "html2pdf-script";
     script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-    script.onload  = () => resolve(true);
+    script.onload = () => resolve(true);
     script.onerror = () => resolve(false);
     document.body.appendChild(script);
   });
 }
 
+// ── Score Gauge ───────────────────────────────────────────────────────────────
+function ScoreGauge({ contractId }) {
+  const [score, setScore] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const fetchScore = async () => {
+    if (score) { setOpen(true); return; }
+    setLoading(true);
+    try {
+      const { data } = await API.get(`/api/contracts/${contractId}/score`);
+      setScore(data);
+      setOpen(true);
+    } catch { /* silent */ }
+    setLoading(false);
+  };
+
+  const color = !score ? "#c9a84c"
+    : score.total >= 70 ? "#4CAF7D"
+      : score.total >= 40 ? "#f0a500"
+        : "#E24B4A";
+
+  const AXES = ["enforceability", "clarity", "balance", "completeness", "compliance"];
+  const LABELS = {
+    enforceability: "Enforceability",
+    clarity: "Clarity",
+    balance: "Balance",
+    completeness: "Completeness",
+    compliance: "Compliance",
+  };
+
+  return (
+    <div style={{ marginTop: "20px" }}>
+      <button
+        onClick={fetchScore}
+        disabled={loading}
+        style={{
+          ...styles.btnSecondary,
+          borderColor: color, color,
+          display: "flex", alignItems: "center", gap: "8px",
+        }}
+      >
+        {loading ? <span style={styles.spinner} /> : "⚖"}
+        {loading ? "Analysing…" : score ? `Strength: ${score.total}/100` : "Analyse Contract Strength"}
+      </button>
+
+      {open && score && (
+        <div style={{
+          marginTop: "16px",
+          background: "rgba(255,255,255,0.03)",
+          border: `1px solid ${color}44`,
+          borderRadius: "12px",
+          padding: "20px",
+        }}>
+          {/* Ring */}
+          <div style={{ textAlign: "center", marginBottom: "20px" }}>
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#222" strokeWidth="12" />
+              <circle
+                cx="60" cy="60" r="50" fill="none"
+                stroke={color} strokeWidth="12"
+                strokeDasharray={`${(score.total / 100) * 314} 314`}
+                strokeLinecap="round"
+                transform="rotate(-90 60 60)"
+                style={{ transition: "stroke-dasharray 0.8s ease" }}
+              />
+              <text x="60" y="55" textAnchor="middle" fill={color} fontSize="22" fontWeight="700" fontFamily="sans-serif">
+                {score.total}
+              </text>
+              <text x="60" y="72" textAnchor="middle" fill="#666" fontSize="10" fontFamily="sans-serif">
+                / 100
+              </text>
+            </svg>
+            <div style={{ color, fontWeight: "700", fontFamily: "sans-serif", fontSize: "14px" }}>
+              {score.total >= 70 ? "Strong Contract" : score.total >= 40 ? "Needs Review" : "Weak — Revise"}
+            </div>
+          </div>
+
+          {/* Axes */}
+          {AXES.map((ax) => (
+            <div key={ax} style={{ marginBottom: "10px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+                <span style={{ fontSize: "12px", color: "#a0917a", fontFamily: "sans-serif" }}>{LABELS[ax]}</span>
+                <span style={{ fontSize: "12px", color, fontFamily: "sans-serif", fontWeight: "600" }}>{score[ax]}/20</span>
+              </div>
+              <div style={{ height: "6px", background: "#222", borderRadius: "99px", overflow: "hidden" }}>
+                <div style={{
+                  height: "100%", width: `${(score[ax] / 20) * 100}%`,
+                  background: color, borderRadius: "99px",
+                  transition: "width 0.6s ease",
+                }} />
+              </div>
+            </div>
+          ))}
+
+          {score.summary && (
+            <p style={{
+              marginTop: "14px", fontSize: "12px", color: "#888",
+              fontFamily: "sans-serif", fontStyle: "italic",
+              borderTop: "1px solid #222", paddingTop: "12px",
+            }}>
+              💡 {score.summary}
+            </p>
+          )}
+
+          <button
+            onClick={() => setOpen(false)}
+            style={{ ...localStyles.btnGhost(), marginTop: "12px", fontSize: "12px", padding: "6px 12px" }}
+          >
+            Close
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Step 3: Contract preview + export ────────────────────────────────────────
 export function ContractPreview({ contract, onNewContract, onEditDetails }) {
-  const previewRef  = useRef(null);
-  const [copied,    setCopied]    = useState(false);
+  const previewRef = useRef(null);
+  const [copied, setCopied] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
 
   // ── Copy to clipboard ──────────────────────────────────────────────────────
@@ -210,11 +328,11 @@ export function ContractPreview({ contract, onNewContract, onEditDetails }) {
 
     await window.html2pdf()
       .set({
-        margin:      [10, 10, 10, 10],
-        filename:    `${filename}.pdf`,
-        image:       { type: "jpeg", quality: 0.98 },
+        margin: [10, 10, 10, 10],
+        filename: `${filename}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
-        jsPDF:       { unit: "mm", format: "a4", orientation: "portrait" },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       })
       .from(html)
       .save();
@@ -276,6 +394,10 @@ export function ContractPreview({ contract, onNewContract, onEditDetails }) {
           ✏ Edit Details
         </button>
       </div>
+
+      {contract.contractId && (
+        <ScoreGauge contractId={contract.contractId} />
+      )}
 
       <p style={{ marginTop: "14px", fontSize: "11px", color: "#444", fontFamily: "sans-serif" }}>
         ⚠ This document is AI-generated for informational purposes. Please have it reviewed by a
