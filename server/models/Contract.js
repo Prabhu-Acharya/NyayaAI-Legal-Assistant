@@ -29,6 +29,23 @@ const contractSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    language: {
+      type: String,
+      default: "english",
+      enum: ["english", "hindi", "marathi", "tamil", "telugu", "bengali", "gujarati", "kannada"],
+    },
+    riskScore: {
+      type: {
+        total: Number,
+        enforceability: Number,
+        clarity: Number,
+        balance: Number,
+        completeness: Number,
+        compliance: Number,
+        summary: String,
+      },
+      default: null,
+    },
   },
   { timestamps: true }
 );

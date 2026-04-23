@@ -1,0 +1,81 @@
+{
+  "employment": [
+    { "section": "Indian Contract Act 1872 §10",   "topic": "essentials of valid contract",             "trigger": ["agreement", "contract", "valid"] },
+    { "section": "Indian Contract Act 1872 §27",   "topic": "restraint of trade — void",                "trigger": ["non-compete", "restraint", "restrict"] },
+    { "section": "Indian Contract Act 1872 §73",   "topic": "compensation for breach of contract",      "trigger": ["breach", "termination", "notice period"] },
+    { "section": "Indian Contract Act 1872 §74",   "topic": "penalty for breach — liquidated damages",  "trigger": ["penalty", "damages", "liquidated"] },
+    { "section": "BNS 2023 §111",                  "topic": "cheating — dishonest inducement",          "trigger": ["salary", "wages", "payment", "cheating"] },
+    { "section": "BNS 2023 §316",                  "topic": "criminal breach of trust",                 "trigger": ["trust", "fiduciary", "confidential", "data"] },
+    { "section": "Payment of Wages Act 1936 §5",   "topic": "time of payment of wages",                 "trigger": ["salary", "wages", "monthly", "payment date"] },
+    { "section": "Industrial Disputes Act 1947 §25F", "topic": "conditions precedent to retrenchment", "trigger": ["retrenchment", "layoff", "termination"] },
+    { "section": "Arbitration & Conciliation Act 1996 §7", "topic": "arbitration agreement",           "trigger": ["dispute", "arbitration", "resolution"] }
+  ],
+  "nda": [
+    { "section": "Indian Contract Act 1872 §10",   "topic": "essentials of valid contract",             "trigger": ["agreement", "contract"] },
+    { "section": "Indian Contract Act 1872 §27",   "topic": "restraint of trade — void",                "trigger": ["non-compete", "restraint", "disclose"] },
+    { "section": "BNS 2023 §316",                  "topic": "criminal breach of trust",                 "trigger": ["trust", "fiduciary", "confidential", "secret"] },
+    { "section": "BNS 2023 §303(2)",               "topic": "theft of property — includes IP/data",     "trigger": ["data", "intellectual property", "trade secret"] },
+    { "section": "Information Technology Act 2000 §43", "topic": "penalty for data breach",             "trigger": ["data", "digital", "electronic", "computer"] },
+    { "section": "Information Technology Act 2000 §72", "topic": "breach of confidentiality & privacy", "trigger": ["privacy", "confidential", "disclose"] },
+    { "section": "Arbitration & Conciliation Act 1996 §7", "topic": "arbitration agreement",           "trigger": ["dispute", "arbitration", "resolution"] }
+  ],
+  "service": [
+    { "section": "Indian Contract Act 1872 §10",   "topic": "essentials of valid contract",             "trigger": ["agreement", "contract"] },
+    { "section": "Indian Contract Act 1872 §51",   "topic": "promisor need not perform unless reciprocal", "trigger": ["payment", "milestone", "deliverable"] },
+    { "section": "Indian Contract Act 1872 §55",   "topic": "effect of failure to perform at fixed time", "trigger": ["deadline", "timeline", "time of essence"] },
+    { "section": "Indian Contract Act 1872 §73",   "topic": "compensation for breach",                  "trigger": ["breach", "default", "failure"] },
+    { "section": "Indian Contract Act 1872 §74",   "topic": "liquidated damages",                       "trigger": ["penalty", "damages", "delay"] },
+    { "section": "BNS 2023 §316",                  "topic": "criminal breach of trust",                 "trigger": ["trust", "fiduciary", "confidential"] },
+    { "section": "Specific Relief Act 1963 §10",   "topic": "specific performance of contract",         "trigger": ["specific performance", "enforce", "injunction"] },
+    { "section": "Arbitration & Conciliation Act 1996 §7", "topic": "arbitration agreement",           "trigger": ["dispute", "arbitration"] }
+  ],
+  "rental": [
+    { "section": "Transfer of Property Act 1882 §105", "topic": "lease defined",                       "trigger": ["lease", "rental", "tenancy"] },
+    { "section": "Transfer of Property Act 1882 §108", "topic": "rights and liabilities of lessor/lessee", "trigger": ["landlord", "tenant", "maintenance", "repair"] },
+    { "section": "Transfer of Property Act 1882 §111", "topic": "determination of lease",              "trigger": ["termination", "eviction", "end of lease"] },
+    { "section": "Indian Contract Act 1872 §73",   "topic": "compensation for breach",                  "trigger": ["breach", "default", "rent"] },
+    { "section": "BNS 2023 §329",                  "topic": "mischief — damage to property",           "trigger": ["damage", "property", "destruction"] },
+    { "section": "Registration Act 1908 §17",      "topic": "compulsory registration of leases >1yr",  "trigger": ["registration", "stamp duty", "lease"] },
+    { "section": "Arbitration & Conciliation Act 1996 §7", "topic": "arbitration agreement",           "trigger": ["dispute", "arbitration"] }
+  ],
+  "sale": [
+    { "section": "Sale of Goods Act 1930 §4",      "topic": "sale and agreement to sell",               "trigger": ["sale", "goods", "sell"] },
+    { "section": "Sale of Goods Act 1930 §16",     "topic": "implied conditions as to quality/fitness", "trigger": ["quality", "fitness", "warranty", "defect"] },
+    { "section": "Sale of Goods Act 1930 §19",     "topic": "property passes when intended to pass",    "trigger": ["delivery", "title", "ownership", "property"] },
+    { "section": "Sale of Goods Act 1930 §55",     "topic": "suit for price",                           "trigger": ["price", "payment", "unpaid"] },
+    { "section": "Indian Contract Act 1872 §73",   "topic": "compensation for breach",                  "trigger": ["breach", "default", "failure"] },
+    { "section": "BNS 2023 §111",                  "topic": "cheating — fraudulent misrepresentation",  "trigger": ["fraud", "misrepresentation", "cheating"] },
+    { "section": "Consumer Protection Act 2019 §2(9)", "topic": "deficiency in goods/services",        "trigger": ["deficiency", "consumer", "defect", "warranty"] },
+    { "section": "Arbitration & Conciliation Act 1996 §7", "topic": "arbitration agreement",           "trigger": ["dispute", "arbitration"] }
+  ],
+  "partnership": [
+    { "section": "Indian Partnership Act 1932 §4", "topic": "definition of partnership",                "trigger": ["partnership", "firm", "partners"] },
+    { "section": "Indian Partnership Act 1932 §9", "topic": "general duties of partners",               "trigger": ["duty", "obligation", "good faith"] },
+    { "section": "Indian Partnership Act 1932 §13","topic": "mutual rights and duties of partners",     "trigger": ["profit", "loss", "share", "management"] },
+    { "section": "Indian Partnership Act 1932 §32","topic": "retirement of a partner",                  "trigger": ["retirement", "exit", "withdrawal"] },
+    { "section": "Indian Partnership Act 1932 §39","topic": "dissolution of firm",                      "trigger": ["dissolution", "winding up", "closure"] },
+    { "section": "Indian Contract Act 1872 §10",   "topic": "essentials of valid contract",             "trigger": ["agreement", "contract"] },
+    { "section": "Income Tax Act 1961 §184",       "topic": "assessment of registered firm",            "trigger": ["tax", "income", "assessment"] },
+    { "section": "Arbitration & Conciliation Act 1996 §7", "topic": "arbitration agreement",           "trigger": ["dispute", "arbitration"] }
+  ],
+  "freelance": [
+    { "section": "Indian Contract Act 1872 §10",   "topic": "essentials of valid contract",             "trigger": ["agreement", "contract"] },
+    { "section": "Indian Contract Act 1872 §55",   "topic": "effect of failure to perform at fixed time", "trigger": ["deadline", "delivery", "time of essence"] },
+    { "section": "Indian Contract Act 1872 §73",   "topic": "compensation for breach",                  "trigger": ["breach", "default", "failure"] },
+    { "section": "Indian Contract Act 1872 §27",   "topic": "restraint of trade — void",                "trigger": ["non-compete", "exclusivity", "restraint"] },
+    { "section": "Copyright Act 1957 §17",         "topic": "first owner of copyright",                 "trigger": ["copyright", "IP", "intellectual property", "ownership"] },
+    { "section": "Copyright Act 1957 §19",         "topic": "assignment of copyright",                  "trigger": ["assignment", "transfer", "IP ownership"] },
+    { "section": "BNS 2023 §316",                  "topic": "criminal breach of trust",                 "trigger": ["confidential", "trust", "secret"] },
+    { "section": "Arbitration & Conciliation Act 1996 §7", "topic": "arbitration agreement",           "trigger": ["dispute", "arbitration"] }
+  ],
+  "loan": [
+    { "section": "Indian Contract Act 1872 §10",   "topic": "essentials of valid contract",             "trigger": ["agreement", "contract"] },
+    { "section": "Indian Contract Act 1872 §73",   "topic": "compensation for breach",                  "trigger": ["breach", "default", "non-payment"] },
+    { "section": "Transfer of Property Act 1882 §58", "topic": "mortgage defined",                     "trigger": ["mortgage", "collateral", "security", "property"] },
+    { "section": "SARFAESI Act 2002 §13",          "topic": "enforcement of security interest",         "trigger": ["security", "collateral", "enforcement", "NPA"] },
+    { "section": "BNS 2023 §111",                  "topic": "cheating — dishonest non-repayment",       "trigger": ["repayment", "default", "fraud"] },
+    { "section": "Negotiable Instruments Act 1881 §138", "topic": "dishonour of cheque",               "trigger": ["cheque", "EMI", "payment", "dishonour"] },
+    { "section": "Usurious Loans Act 1918 §3",     "topic": "power to re-open transactions — excessive interest", "trigger": ["interest", "rate", "usurious"] },
+    { "section": "Arbitration & Conciliation Act 1996 §7", "topic": "arbitration agreement",           "trigger": ["dispute", "arbitration"] }
+  ]
+}

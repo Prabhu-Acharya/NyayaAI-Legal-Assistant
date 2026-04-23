@@ -1,15 +1,15 @@
-const jwt      = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const Contract = require("../models/Contract");
-const User     = require("../models/User");
-const logger   = require("../config/logger");
+const User = require("../models/User");
+const logger = require("../config/logger");
 const {
   CONTRACT_TEMPLATES,
   generateContractText,
+  scoreContract,
   streamContractPDF,
   buildContractDOCX,
   sanitizeFilename,
 } = require("../services/contractAI.service");
-
 const FREE_CONTRACT_LIMIT = 3;
 
 const protectExport = (req, res, next) => {
@@ -31,7 +31,7 @@ const protectExport = (req, res, next) => {
 
 const generateContract = async (req, res) => {
   try {
-    const { type, formData } = req.body;
+    const { type, formData, language = "english" } = req.body;
 
     if (!type || !CONTRACT_TEMPLATES[type])
       return res.status(400).json({ message: "Invalid contract type." });
@@ -42,10 +42,10 @@ const generateContract = async (req, res) => {
     if (!user) return res.status(401).json({ message: "User not found." });
 
     // ── Auto-reset usage if a new month has started ───────────────────────
-    const now       = new Date();
+    const now = new Date();
     const resetDate = new Date(user.usageResetDate);
     if (now.getFullYear() > resetDate.getFullYear() || now.getMonth() > resetDate.getMonth()) {
-      user.contractsUsed  = 0;
+      user.contractsUsed = 0;
       user.usageResetDate = now;
       await user.save();
     }
@@ -55,29 +55,30 @@ const generateContract = async (req, res) => {
       return res.status(403).json({
         message: `Free plan allows ${FREE_CONTRACT_LIMIT} contracts. Upgrade to Premium for unlimited access.`,
         upgradeRequired: true,
-        used:  user.contractsUsed,
+        used: user.contractsUsed,
         limit: FREE_CONTRACT_LIMIT,
       });
     }
 
-    const contractText = await generateContractText(type, formData);
+    const contractText = await generateContractText(type, formData, language);
 
     const contract = await Contract.create({
-      user:    req.user,
+      user: req.user,
       type,
-      title:   `${CONTRACT_TEMPLATES[type]} - ${new Date().toLocaleDateString("en-IN")}`,
+      title: `${CONTRACT_TEMPLATES[type]} - ${new Date().toLocaleDateString("en-IN")}`,
       formData,
       content: contractText,
+      language,
     });
 
     await User.findByIdAndUpdate(req.user, { $inc: { contractsUsed: 1 } });
 
     res.status(201).json({
       contractId: contract._id,
-      title:      contract.title,
-      content:    contractText,
+      title: contract.title,
+      content: contractText,
       usage: {
-        used:  user.contractsUsed + 1,
+        used: user.contractsUsed + 1,
         limit: FREE_CONTRACT_LIMIT,
       },
     });
@@ -124,7 +125,7 @@ const exportPDF = async (req, res) => {
   try {
     const contract = await Contract.findOne({ _id: req.params.id, user: req.user });
     if (!contract) return res.status(404).json({ message: "Not found." });
-    streamContractPDF(contract, res);
+    await streamContractPDF(contract, res);
   } catch (err) {
     logger.error(`exportPDF failed — contract:${req.params.id} — ${err.message}`);
     res.status(500).json({ message: err.message });
@@ -149,6 +150,28 @@ const exportDOCX = async (req, res) => {
   }
 };
 
+// Add new controller:
+const getContractScore = async (req, res) => {
+  try {
+    const contract = await Contract.findOne({ _id: req.params.id, user: req.user });
+    if (!contract) return res.status(404).json({ message: "Not found." });
+
+    // Return cached score if exists
+    if (contract.riskScore?.total != null) {
+      return res.json(contract.riskScore);
+    }
+
+    const score = await scoreContract(contract.content);
+
+    await Contract.findByIdAndUpdate(req.params.id, { riskScore: score });
+
+    res.json(score);
+  } catch (err) {
+    logger.error(`getContractScore failed — contract:${req.params.id} — ${err.message}`);
+    res.status(500).json({ message: err.message });
+  }
+};
+
 module.exports = {
   protectExport,
   generateContract,
@@ -157,4 +180,5 @@ module.exports = {
   deleteContract,
   exportPDF,
   exportDOCX,
+  getContractScore,
 };

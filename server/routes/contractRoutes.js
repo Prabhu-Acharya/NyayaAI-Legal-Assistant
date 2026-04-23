@@ -10,6 +10,7 @@ const {
   deleteContract,
   exportPDF,
   exportDOCX,
+  getContractScore,      // ← add
 } = require("../controllers/contractController");
 
 // Max 5 generate attempts per IP per 15 minutes
@@ -25,6 +26,7 @@ const generateLimiter = rateLimit({
 
 router.post("/generate",        generateLimiter, protect, generateContract);
 router.get("/",                 protect,  listContracts);
+router.get("/:id/score",        protect,  getContractScore);
 router.get("/:id",              protect,  getContract);
 router.delete("/:id",           protect,  deleteContract);
 router.get("/:id/export/pdf",   protectExport, exportPDF);
