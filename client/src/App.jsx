@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Profile from "./pages/Profile";
+import Landing from "./pages/Landing";
 
 // OUTSIDE App — stable identity, no remount on state change
 function ProtectedDashboard({ token, hasAcceptedTerms, onTermsAccepted, onLogout }) {
@@ -81,9 +82,10 @@ function App() {
             <Route path="analyze" element={<DocumentAnalyzer />} /> {/* ← NEW */}
             <Route path="profile" element={<Profile onLogout={handleLogout} />} />
           </Route>
+          // AFTER:
           <Route
             path="/"
-            element={<Navigate to={token ? "/dashboard" : "/register"} />}
+            element={token ? <Navigate to="/dashboard" /> : <Landing />}
           />
         </Routes>
       </BrowserRouter>

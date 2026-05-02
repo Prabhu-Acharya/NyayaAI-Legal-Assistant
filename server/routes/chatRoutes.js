@@ -1,3 +1,4 @@
+const { ragMiddleware } = require('../middleware/ragMiddleware');
 const express  = require('express');
 const router   = express.Router();
 const protect  = require('../middleware/authMiddleware');
@@ -13,7 +14,7 @@ const {
 router.get('/',           protect, listSessions);
 router.post('/',          protect, createSession);
 router.get('/:id',        protect, getSession);
-router.post('/:id/message', protect, addMessage);
+router.post('/:id/message', protect, ragMiddleware, addMessage);
 router.delete('/:id',     protect, deleteSession);
 
 module.exports = router;

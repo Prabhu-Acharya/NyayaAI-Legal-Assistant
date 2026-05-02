@@ -7,16 +7,16 @@ import API from "../services/api";
 import { useChatSession } from "../hooks/useChatSession";
 
 const Dashboard = () => {
-  const [question,    setQuestion]    = useState("");
-  const [loading,     setLoading]     = useState(false);
+  const [question, setQuestion] = useState("");
+  const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const chatEndRef = useRef(null);
 
   const {
     sessionId, setSessionId,
-    sessions,  setSessions,
+    sessions, setSessions,
     sessionsLoading,
-    messages,  setMessages,
+    messages, setMessages,
     fetchSessions, loadSession, createSession, deleteSession,
   } = useChatSession();
 
@@ -32,23 +32,33 @@ const Dashboard = () => {
       catch { return; }
     }
 
-    const userMsg = { role: "user", text: question };
-    setMessages((prev) => [...prev, userMsg]);
+    setMessages((prev) => [...prev, { role: "user", text: question }]);
     setLoading(true);
     setQuestion("");
 
     try {
-      await API.post(`/api/chat/${sid}/message`, { role: "user", text: question });
-    } catch { /* silent */ }
+      // single call — saves msg, runs RAG, calls Groq, returns reply+citations+cases
+      const { data } = await API.post(`/api/chat/${sid}/message`, {
+        role: "user",
+        text: question,
+      });
 
-    try {
-      const { data } = await API.post("/api/query/ask", { question });
-      const aiText = data.answer || "No response from AI";
-      setMessages((prev) => [...prev, { role: "ai", text: aiText }]);
-      await API.post(`/api/chat/${sid}/message`, { role: "ai", text: aiText });
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          text: data.reply || "No response.",
+          citations: data.citations || [],
+          cases: data.cases || [],
+        },
+      ]);
+
       fetchSessions();
     } catch {
-      setMessages((prev) => [...prev, { role: "ai", text: "Server error ❌ Please try again." }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", text: "Server error ❌ Please try again.", citations: [], cases: [] },
+      ]);
     }
 
     setLoading(false);

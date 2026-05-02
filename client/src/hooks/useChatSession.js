@@ -22,7 +22,7 @@ export function useChatSession() {
     try {
       const { data } = await API.get(`/api/chat/${id}`);
       setSessionId(data._id);
-      setMessages(data.messages.map((m) => ({ role: m.role, text: m.text })));
+      setMessages(data.messages.map((m) => ({ role: m.role, text: m.text, citations: [], cases: [] })));
     } catch {
       console.error("Failed to load session.");
     }
