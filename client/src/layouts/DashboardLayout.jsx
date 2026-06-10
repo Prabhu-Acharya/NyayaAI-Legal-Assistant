@@ -1,12 +1,13 @@
 // client/src/layouts/DashboardLayout.jsx
 import { NavLink, Outlet } from "react-router-dom";
-import { MessageCircle, FileText, User, LogOut, FileSearch } from "lucide-react";
+import { MessageCircle, FileText, User, LogOut, FileSearch, FilePlus } from "lucide-react";
 import TopBar from "../components/TopBar";
 
 const navLinks = [
   { to: "/dashboard",           label: "Legal Assistant",    icon: MessageCircle, end: true },
   { to: "/dashboard/contracts", label: "Contract Generator", icon: FileText },
   { to: "/dashboard/analyze",   label: "Analyze Doc",        icon: FileSearch },
+  { to: "/dashboard/custom-contracts", label: "Custom Builder", icon: FilePlus },
   { to: "/dashboard/profile",   label: "Profile",            icon: User },
 ];
 

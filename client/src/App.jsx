@@ -2,7 +2,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ContractGenerator from "./pages/ContractGenerator";
-import DocumentAnalyzer from "./pages/DocumentAnalyzer"; // ← NEW
+import DocumentAnalyzer from "./pages/DocumentAnalyzer";
 import DashboardLayout from "./layouts/DashboardLayout";
 import TermsModal from "./components/TermsModal";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -10,8 +10,8 @@ import { useState } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Profile from "./pages/Profile";
 import Landing from "./pages/Landing";
+import CustomContractBuilder from './pages/CustomContractBuilder';
 
-// OUTSIDE App — stable identity, no remount on state change
 function ProtectedDashboard({ token, hasAcceptedTerms, onTermsAccepted, onLogout }) {
   if (!token) return <Navigate to="/login" />;
   return (
@@ -79,10 +79,10 @@ function App() {
           >
             <Route index element={<Dashboard />} />
             <Route path="contracts" element={<ContractGenerator />} />
-            <Route path="analyze" element={<DocumentAnalyzer />} /> {/* ← NEW */}
+            <Route path="analyze" element={<DocumentAnalyzer />} />
+            <Route path="custom-contracts" element={<CustomContractBuilder />} />
             <Route path="profile" element={<Profile onLogout={handleLogout} />} />
           </Route>
-          // AFTER:
           <Route
             path="/"
             element={token ? <Navigate to="/dashboard" /> : <Landing />}

@@ -1,8 +1,17 @@
 const mongoose = require('mongoose');
 
+// Week 9: added citations[] to messageSchema
+const citationSchema = new mongoose.Schema({
+  section:      { type: String },
+  topic:        { type: String },
+  contractType: { type: String },
+  score:        { type: Number },
+}, { _id: false });
+
 const messageSchema = new mongoose.Schema({
   role:      { type: String, enum: ['user', 'ai'], required: true },
   text:      { type: String, required: true },
+  citations: { type: [citationSchema], default: [] },   // ← NEW
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -14,6 +14,7 @@ const contractSchema = new mongoose.Schema(
       enum: [
         "employment", "service", "nda", "rental",
         "sale", "partnership", "freelance", "loan",
+        "cofounder", "terms", "privacy", "legal_notice",
       ],
     },
     title: {
