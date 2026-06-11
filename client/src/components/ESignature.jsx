@@ -19,20 +19,15 @@ export default function ESignature({ onSign, onClear }) {
 
   const handleConfirm = () => {
     if (!sigRef.current) return;
-    const canvas = sigRef.current;
-    // Handle both possible API shapes
-    const isEmpty = typeof canvas.isEmpty === 'function' ? canvas.isEmpty() : false;
-    if (isEmpty) return;
-    const trimmed = typeof canvas.getTrimmedCanvas === 'function'
-      ? canvas.getTrimmedCanvas()
-      : canvas.getCanvas();
-    const dataUrl = trimmed.toDataURL('image/png');
+    // Use getCanvas() directly — avoids getTrimmedCanvas bug
+    const canvas = sigRef.current.getCanvas();
+    const dataUrl = canvas.toDataURL('image/png');
     setSigned(true);
     onSign?.(dataUrl);
   };
 
   const handleClear = () => {
-    if (sigRef.current?.clear) sigRef.current.clear();
+    sigRef.current?.clear();
     setSigned(false);
     onClear?.();
   };
